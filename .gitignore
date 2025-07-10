@@ -1,5 +1,6 @@
 */config/development
 */logs/log-*.php
+sftp-config.json
 !*/logs/index.html
 */cache/*
 !system/cache/*
