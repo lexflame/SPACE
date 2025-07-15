@@ -53,7 +53,7 @@
         const priorityLabel = task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success';
         const $body = $('<div class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-wrap">');
 
-        const $info = $('<div class="task-info text-truncate pr-2 flex-fill">');
+        const $info = $('<div class="task-info text-truncate pr-2 flex-fill w-100 w-sm-auto">');
         $info.append(`<h6 class="mb-1">📝 ${task.title}</h6>`);
         $info.append(`<small class="d-block">📅 ${new Date(task.date).toLocaleString()}</small>`);
         $info.append(`<small class="d-block">🔥 Приоритет: <span class="text-${priorityLabel} font-weight-bold">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span></small>`);
