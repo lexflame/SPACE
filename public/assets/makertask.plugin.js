@@ -45,19 +45,21 @@
       }
 
       $.each(filtered, function(_, task) {
-        const $card = $('<div class="card mb-2 bg-dark text-white border-secondary">').attr('data-id', task.id);
+        const $card = $('<div class="card mb-2 bg-dark text-white border-secondary w-100">')
+          .attr('data-id', task.id)
+          .addClass('task-card');
         if (task.completed) $card.addClass('completed');
 
         const priorityLabel = task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success';
-        const $body = $('<div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">');
+        const $body = $('<div class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-wrap">');
 
-        const $info = $('<div>');
+        const $info = $('<div class="task-info text-truncate pr-2 flex-fill">');
         $info.append(`<h6 class="mb-1">📝 ${task.title}</h6>`);
         $info.append(`<small class="d-block">📅 ${new Date(task.date).toLocaleString()}</small>`);
         $info.append(`<small class="d-block">🔥 Приоритет: <span class="text-${priorityLabel} font-weight-bold">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span></small>`);
 
         const $menu = $(`
-          <div class="dropdown">
+          <div class="dropdown task-menu text-right">
             <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown">
               ⋮
             </button>
