@@ -66,7 +66,7 @@
         }
         .topcp-navbar .topcp-btn:focus { box-shadow: 0 0 0 .15rem #007aff6a; }
         .topcp-navbar::-webkit-scrollbar { display:none; }
-        body.topcp-has-topbar { padding-top:56px !important;}
+        
       `).appendTo('head');
     }
 
@@ -131,7 +131,7 @@
       function adaptPanelHeight(){
         let h = $(nav).outerHeight();
         // задаём отступ для body, чтобы не перекрывало контент
-        $('body').css('padding-top', h + 'px');
+        // $('body').css('padding-top', h + 'px');
       }
       adaptPanelHeight();
       $(window).on('resize.topcp', adaptPanelHeight);
