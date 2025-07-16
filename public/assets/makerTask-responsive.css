@@ -44,7 +44,32 @@
     body #makerTaskApp .nav-tabs {
       border: none;
     }
-/*    body #makerTaskApp * {
+    #taskForm button[type="submit"] {
+      /*background-color: black;*/
+      /*border: 0px;*/
+    }
+    .task-list .editor_form.edit-form-wrapper.collapse.mt-2 {
+      width: 98%;
+      margin: auto;
+      padding-bottom: 16px;
+    }
+    .task-list .dropdown-menu {
+      background-color: #343a40;
+      color: #ffffff;
+      border: 1px solid #CCC;
+    }
+    .task-list .dropdown-menu * {
+      color: #ffffff;
+    }
+    #taskForm input::placeholder {
+      color: #CCC;
+    }
+    #taskForm input, #taskForm select, #taskForm option {
+      background-color: #212529 !important;
+      color: #CCC;
+      border: 1px solid #cccccc66;
+    }
+    /*body #makerTaskApp * {
       -webkit-transition: all 0.5s linear;
       -moz-transition: all 0.5s linear;
       -ms-transition: all 0.5s linear;

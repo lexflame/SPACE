@@ -4,8 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MakerTask</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- jQuery (обязательно перед Bootstrap) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Popper.js -->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <!-- Bootstrap JS -->
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="/assets/makerTask-responsive.css"/>
 </head>
 <body class="dark">
@@ -33,7 +40,7 @@
           <option value="medium" selected>Средний</option>
           <option value="high">Высокий</option>
         </select>
-        <button type="submit" class="btn btn-primary mb-2">Создать</button>
+        <button type="submit" class="btn btn-warning mb-2">Создать</button>
         <input type="text" class="form-control ml-auto mb-2" id="searchInput" placeholder="Поиск...">
       </form>
 
@@ -49,35 +56,13 @@
 
       <ul class="nav nav-tabs mb-3" id="tabList">
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link active" data-filter="all">Все</a></li>
-        <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="today">Сегодня</a></li>
+        <li class="nav-item"><a href="#" class="today_btn ndoundtabs nav-link" data-filter="today">Сегодня</a></li>
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="completed">Выполнено</a></li>
       </ul>
 
       <div class="task-list">
         
-      <div class="card mb-3 bg-dark text-white border-secondary">
-        <div class="card-body py-2 px-3 d-flex flex-nowrap  flex-md-nowrap justify-content-between align-items-center">
-
-          <!-- Информация о задаче: всё в одну строку -->
-          <div class="d-flex flex-nowrap  align-items-center flex-grow-1">
-            <h6 class="mb-0 mr-3">📝 Подготовить отчёт</h6>
-            <small class="text-muted mr-3">📅 2025-07-16 10:30</small>
-            <small class="mr-3">🔥 Приоритет: <span class="text-danger font-weight-bold">Высокий</span></small>
-          </div>
-
-          <!-- Кнопка меню -->
-          <div class="dropdown ml-md-3 mt-2 mt-md-0">
-            <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="taskMenu123" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              ⋮
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="taskMenu123">
-              <a class="dropdown-item edit-task" href="#" data-id="123">Редактировать</a>
-              <a class="dropdown-item delete-task text-danger" href="#" data-id="123">Удалить</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      
 
 
 
@@ -111,6 +96,7 @@
 
         function saveTasks() {
           localStorage.setItem(settings.storageKey, JSON.stringify(tasks));
+          syncWithServer();
         }
 
         function renderTasks() {
@@ -161,16 +147,16 @@
                     </small>
 
                     <!-- Заголовок -->
-                    <h6 class="mb-0 text-truncate text-transition ${textDecoration}" style="max-width: 250px;">
+                    <h6 class="mb-0 text-truncate text-transition ${textDecoration}" style="max-width: 500px;">
                       📝 ${task.title}
                     </h6>
                   </div>
 
                   <!-- Приоритет справа -->
                   <div class="ml-auto mr-3 text-nowrap">
-                    🔥 Приоритет: <span class="text-${priorityLabel} font-weight-bold">
+                    <span class="text-${priorityLabel} font-weight-bold">
                       ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                    </span>
+                    </span> - приоритет 🔥
                   </div>
 
                   <!-- Меню -->
@@ -185,8 +171,34 @@
                   </div>
 
                 </div>
+                
+                <div class="editor_form edit-form-wrapper collapse mt-2">
+                  <form class="edit-inline-form text-white">
+                    <div class="form-row align-items-center">
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control form-control-sm edit-title" placeholder="Заголовок" value="${task.title}">
+                      </div>
+                      <div class="col-sm-4">
+                        <input type="datetime-local" class="form-control form-control-sm edit-date" value="${task.date}">
+                      </div>
+                      <div class="col-sm-3">
+                        <select class="form-control form-control-sm edit-priority">
+                          <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Низкий</option>
+                          <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Средний</option>
+                          <option value="high" ${task.priority === 'high' ? 'selected' : ''}>Высокий</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-1">
+                        <button type="submit" class="btn btn-success btn-sm">💾</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
               </div>
             `);
+
+
 
             if (task.completed) $card.addClass('completed');
             $(list).append($card);
@@ -230,7 +242,26 @@
           // });
         }
 
-
+        function syncWithServer() {
+          $.ajax({
+            url: '/api/tasks/sync', // Укажи свой реальный URL на сервере
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(tasks),
+            success: function(response) {
+              console.log('Синхронизация успешна:', response);
+              // если сервер вернул новые данные — можно обновить
+              // tasks = response.tasks || tasks;
+              // renderTasks();
+            },
+            error: function(xhr, status, error) {
+              if(error === 'Not Found'){
+                error = 'Сервер недоступен';
+              }
+              console.error('Данные не синхронизированны с ядром SPACE:', error);
+            }
+          });
+        }
 
 
         function applyTheme(theme) {
@@ -266,13 +297,15 @@
           reader.readAsText(file);
         }
 
-        function showEditModal(task) {
-          $('#editTaskId').val(task.id);
-          $('#editTaskTitle').val(task.title);
-          $('#editTaskDate').val(task.date);
-          $('#editTaskPriority').val(task.priority);
-          $('#editModal').modal('show');
-        }
+        $(document).on('click', '.edit-task', function(e) {
+          e.preventDefault();
+          const id = $(this).data('id');
+          const $card = $(this).closest('.card');
+          const $form = $card.find('.edit-form-wrapper');
+
+          $('.edit-form-wrapper').hide('slow'); // сворачиваем остальные
+          $form.show();
+        });
 
         function initEvents() {
           $(document).find('#taskForm').on('submit', function(e) {
@@ -291,6 +324,7 @@
             saveTasks();
             this.reset();
             renderTasks();
+            syncWithServer();
           });
 
           $(document).on('click', '.complete-btn', function() {
@@ -298,8 +332,9 @@
             const task = tasks.find(t => t.id === id);
             if (task) {
               task.completed = true;
-              saveTasks();
               renderTasks();
+              saveTasks();
+              syncWithServer(); 
             }
           });
 
@@ -348,6 +383,23 @@
             }
           });
 
+          $(document).on('submit', '.edit-inline-form', function(e) {
+            e.preventDefault();
+            const $form = $(this);
+            const $card = $form.closest('.card');
+            const id = parseInt($card.data('id'));
+
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+              task.title = $form.find('.edit-title').val();
+              task.date = $form.find('.edit-date').val();
+              task.priority = $form.find('.edit-priority').val();
+              saveTasks();
+              renderTasks();
+            }
+          });
+
+
           $('#exportTasks').on('click', function() {
             exportTasks();
           });
@@ -368,6 +420,7 @@
           initTheme();
           initEvents();
           renderTasks();
+          setInterval(syncWithServer, 10 * 60 * 1000);
         }
 
         init();
@@ -382,17 +435,18 @@
 
 
     $(document).ready(function() {
-      $('#maker-task-app').makerTask();
+       $('.today_btn').click();
     });
-    $(document).on('click', '.edit-task', function () {
-      const id = $(this).data('id');
-      // логика редактирования задачи с id
-    });
+    // $(document).on('ready', '', function () {});
+    // $(document).on('click', '.edit-task', function () {
+    //   const id = $(this).data('id');
+    //   // логика редактирования задачи с id
+    // });
 
-    $(document).on('click', '.delete-task', function () {
-      const id = $(this).data('id');
-      // логика удаления задачи с id
-    });
+    // $(document).on('click', '.delete-task', function () {
+    //   const id = $(this).data('id');
+    //   // логика удаления задачи с id
+    // });
 
   </script>
   <!-- <audio id="sound-complete" src="" preload="auto" type="audio/ogg"></audio> -->
