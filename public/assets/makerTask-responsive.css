@@ -1,4 +1,4 @@
-html, body {
+    html, body {
       height: 100%;
       margin: 0;
       overflow: hidden;
@@ -36,4 +36,41 @@ html, body {
       text-decoration: line-through;
       opacity: 0.6;
     }
-    
+    body #makerTaskApp .ndoundtabs {
+      background: none;
+      border: none;
+      color: #afadad;
+    }
+    body #makerTaskApp .nav-tabs {
+      border: none;
+    }
+    body #makerTaskApp * {
+      -webkit-transition: all 0.5s linear;
+      -moz-transition: all 0.5s linear;
+      -ms-transition: all 0.5s linear;
+      -o-transition: all 0.5s linear;
+      transition: all 0.5s linear;
+    }
+    .task-completed-anim {
+      animation: flashComplete 0.6s ease-in-out;
+    }
+
+    @keyframes flashComplete {
+      0% { background-color: #28a74522; }
+      50% { background-color: #28a74588; }
+      100% { background-color: transparent; }
+    }
+
+    .task-uncompleted-anim {
+      animation: flashUndo 0.6s ease-in-out;
+    }
+
+    @keyframes flashUndo {
+      0% { background-color: #dc354522; }
+      50% { background-color: #dc354588; }
+      100% { background-color: transparent; }
+    }
+
+    .text-transition {
+      transition: all 0.3s ease;
+    }

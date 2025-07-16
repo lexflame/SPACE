@@ -48,21 +48,25 @@
       
 
       <ul class="nav nav-tabs mb-3" id="tabList">
-        <li class="nav-item"><a href="#" class="nav-link active" data-filter="all">Все</a></li>
-        <li class="nav-item"><a href="#" class="nav-link" data-filter="today">Сегодня</a></li>
-        <li class="nav-item"><a href="#" class="nav-link" data-filter="completed">Выполнено</a></li>
+        <li class="nav-item"><a href="#" class="ndoundtabs nav-link active" data-filter="all">Все</a></li>
+        <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="today">Сегодня</a></li>
+        <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="completed">Выполнено</a></li>
       </ul>
 
       <div class="task-list">
         
       <div class="card mb-3 bg-dark text-white border-secondary">
-        <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="mb-1">📝 Подготовить отчёт</h6>
-            <small class="d-block">📅 2025-07-16 10:30</small>
-            <small class="d-block">🔥 Приоритет: <span class="text-danger font-weight-bold">Высокий</span></small>
+        <div class="card-body py-2 px-3 d-flex flex-nowrap  flex-md-nowrap justify-content-between align-items-center">
+
+          <!-- Информация о задаче: всё в одну строку -->
+          <div class="d-flex flex-nowrap  align-items-center flex-grow-1">
+            <h6 class="mb-0 mr-3">📝 Подготовить отчёт</h6>
+            <small class="text-muted mr-3">📅 2025-07-16 10:30</small>
+            <small class="mr-3">🔥 Приоритет: <span class="text-danger font-weight-bold">Высокий</span></small>
           </div>
-          <div class="dropdown">
+
+          <!-- Кнопка меню -->
+          <div class="dropdown ml-md-3 mt-2 mt-md-0">
             <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="taskMenu123" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               ⋮
             </button>
@@ -71,8 +75,10 @@
               <a class="dropdown-item delete-task text-danger" href="#" data-id="123">Удалить</a>
             </div>
           </div>
+
         </div>
       </div>
+
 
 
 
@@ -80,8 +86,11 @@
     </div>
   </div>
 
-  <!-- Подключение библиотек -->
+  <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <audio id="sound-complete" src="https://cdn.jsdelivr.net/gh/zaaack/soundfx/success.mp3" preload="auto"></audio>
+  <audio id="sound-undo" src="https://cdn.jsdelivr.net/gh/zaaack/soundfx/click.mp3" preload="auto"></audio>
+
   <!-- <script src="/assets/makertask.plugin.js"></script> -->
   <script>
 
@@ -117,7 +126,7 @@
           let filtered = tasks.filter(t => {
             if (currentFilter === 'today') return t.date.startsWith(todayStr) && !t.completed;
             if (currentFilter === 'completed') return t.completed;
-            return currentFilter === 'all' || true;
+            return true;
           });
 
           if (searchQuery) {
@@ -132,40 +141,75 @@
           }
 
           $.each(filtered, function(_, task) {
-            const $card = $('<div class="card mb-2 bg-dark text-white border-secondary w-100">')
-              .attr('data-id', task.id)
-              .addClass('task-card');
-            if (task.completed) $card.addClass('completed');
-
             const priorityLabel = task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success';
-            const $body = $('<div class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-wrap">');
+            const checkedAttr = task.completed ? 'checked' : '';
+            const textDecoration = task.completed ? 'text-decoration-line-through opacity-50' : '';
 
-            const $info = $('<div class="task-info text-truncate pr-2 flex-fill w-100 w-sm-auto">');
-            $info.append(`<h6 class="mb-1">📝 ${task.title}</h6>`);
-            $info.append(`<small class="d-block">📅 ${new Date(task.date).toLocaleString()}</small>`);
-            $info.append(`<small class="d-block">🔥 Приоритет: <span class="text-${priorityLabel} font-weight-bold">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span></small>`);
+            const $card = $(`
+              <div class="card mb-2 bg-dark text-white border-secondary w-100" data-id="${task.id}">
+                <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-nowrap">
 
-            const $menu = $(`
-              <div class="dropdown task-menu text-right">
-                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown">
-                  ⋮
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item edit-task" href="#" data-id="${task.id}">Редактировать</a>
-                  <a class="dropdown-item delete-task text-danger" href="#" data-id="${task.id}">Удалить</a>
+                  <!-- Левая часть: чекбокс + дата + заголовок -->
+                  <div class="d-flex align-items-center flex-nowrap overflow-hidden text-truncate">
+
+                    <!-- Чекбокс -->
+                    <div class="custom-control custom-checkbox mr-3">
+                      <input type="checkbox" class="custom-control-input complete-checkbox" id="check-${task.id}" data-id="${task.id}" ${checkedAttr}>
+                      <label class="custom-control-label" for="check-${task.id}"></label>
+                    </div>
+
+                    <!-- Дата -->
+                    <small class="text-muted mr-3 text-nowrap">
+                      📅 ${new Date(task.date).toLocaleString()}
+                    </small>
+
+                    <!-- Заголовок -->
+                    <h6 class="mb-0 text-truncate ${textDecoration}" style="max-width: 250px;">
+                      📝 ${task.title}
+                    </h6>
+                  </div>
+
+                  <!-- Приоритет справа -->
+                  <div class="ml-auto mr-3 text-nowrap">
+                    🔥 Приоритет: <span class="text-${priorityLabel} font-weight-bold">
+                      ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </span>
+                  </div>
+
+                  <!-- Меню -->
+                  <div class="dropdown flex-shrink-0">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-toggle="dropdown">
+                      ⋮
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item edit-task" href="#" data-id="${task.id}">Редактировать</a>
+                      <a class="dropdown-item delete-task text-danger" href="#" data-id="${task.id}">Удалить</a>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             `);
 
-            $body.append($info).append($menu);
-            $card.append($body);
+            if (task.completed) $card.addClass('completed');
             $list.append($card);
           });
 
+          // обработчик чекбоксов
+          $list.find('.complete-checkbox').on('change', function () {
+            const id = $(this).data('id');
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+              task.completed = this.checked;
+              saveTasks();
+              renderTasks(); // перерендерим для обновления вида
+            }
+          });
+
           $list.sortable({
-            update: function() {
+            update: function () {
               const newOrder = [];
-              $list.children('.card').each(function() {
+              $list.children('.card').each(function () {
                 const id = $(this).attr('data-id');
                 const task = tasks.find(t => t.id == id);
                 if (task) newOrder.push(task);
@@ -175,6 +219,9 @@
             }
           });
         }
+
+
+
 
         function applyTheme(theme) {
           // if(theme === 'light'){theme = 'dark';}
