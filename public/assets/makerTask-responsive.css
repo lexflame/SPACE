@@ -44,13 +44,13 @@
     body #makerTaskApp .nav-tabs {
       border: none;
     }
-    body #makerTaskApp * {
+/*    body #makerTaskApp * {
       -webkit-transition: all 0.5s linear;
       -moz-transition: all 0.5s linear;
       -ms-transition: all 0.5s linear;
       -o-transition: all 0.5s linear;
       transition: all 0.5s linear;
-    }
+    }*/
     .task-completed-anim {
       animation: flashComplete 0.6s ease-in-out;
     }

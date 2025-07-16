@@ -88,9 +88,6 @@
 
   <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <audio id="sound-complete" src="https://cdn.jsdelivr.net/gh/zaaack/soundfx/success.mp3" preload="auto"></audio>
-  <audio id="sound-undo" src="https://cdn.jsdelivr.net/gh/zaaack/soundfx/click.mp3" preload="auto"></audio>
-
   <!-- <script src="/assets/makertask.plugin.js"></script> -->
   <script>
 
@@ -117,8 +114,8 @@
         }
 
         function renderTasks() {
-          const $list = $container.find('.task-list');
-          $list.empty();
+          const list = $(document).find('.task-list');
+          $(list).empty();
 
           const now = new Date();
           const todayStr = now.toISOString().split('T')[0];
@@ -136,7 +133,7 @@
           filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
           if (!filtered.length) {
-            $list.append('<p class="text-muted">Задач нет.</p>');
+            $(list).append('<p class="text-muted">Задач нет.</p>');
             return;
           }
 
@@ -164,7 +161,7 @@
                     </small>
 
                     <!-- Заголовок -->
-                    <h6 class="mb-0 text-truncate ${textDecoration}" style="max-width: 250px;">
+                    <h6 class="mb-0 text-truncate text-transition ${textDecoration}" style="max-width: 250px;">
                       📝 ${task.title}
                     </h6>
                   </div>
@@ -192,32 +189,45 @@
             `);
 
             if (task.completed) $card.addClass('completed');
-            $list.append($card);
+            $(list).append($card);
           });
 
           // обработчик чекбоксов
-          $list.find('.complete-checkbox').on('change', function () {
+          $(document).find('.complete-checkbox').on('change', function () {
             const id = $(this).data('id');
             const task = tasks.find(t => t.id === id);
             if (task) {
-              task.completed = this.checked;
+              const completed = this.checked;
+              task.completed = completed;
+
+              const card = $(this).closest('.card');
+              var audio = new Audio('/assets/correctch.mp3');
+              audio.play();
+
+              // добавим анимацию
+              $(card).addClass(completed ? 'task-completed-anim' : 'task-uncompleted-anim');
+
+              // удалим анимацию через 1s
+              setTimeout(() => $(card).removeClass('task-completed-anim task-uncompleted-anim'), 1000);
+
               saveTasks();
-              renderTasks(); // перерендерим для обновления вида
+              renderTasks(); // Обновим весь список
             }
           });
 
-          $list.sortable({
-            update: function () {
-              const newOrder = [];
-              $list.children('.card').each(function () {
-                const id = $(this).attr('data-id');
-                const task = tasks.find(t => t.id == id);
-                if (task) newOrder.push(task);
-              });
-              tasks = newOrder;
-              saveTasks();
-            }
-          });
+
+          // $(document).sortable({
+          //   update: function () {
+          //     const newOrder = [];
+          //     $(this).children('.card').each(function () {
+          //       const id = $(this).attr('data-id');
+          //       const task = tasks.find(t => t.id == id);
+          //       if (task) newOrder.push(task);
+          //     });
+          //     tasks = newOrder;
+          //     saveTasks();
+          //   }
+          // });
         }
 
 
@@ -385,5 +395,10 @@
     });
 
   </script>
+  <!-- <audio id="sound-complete" src="" preload="auto" type="audio/ogg"></audio> -->
+  <!-- <audio id="sound-undo" src="https://cdn.jsdelivr.net/gh/zaaack/soundfx/click.mp3" preload="auto"></audio> -->
+  <audio id="sound" preload="auto">
+   <source src="/assets/correctch.mp3" type="audio/mpeg">
+  </audio>
 </body>
 </html>
