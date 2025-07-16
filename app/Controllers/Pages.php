@@ -8,6 +8,7 @@ class Pages extends Controller
 {
     public function tasks()
     {
-        return view('panelspace').view('tasks');
+        // return view('panelspace').view('tasks');
+        return view('tasks');
     }
 }
