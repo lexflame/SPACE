@@ -1,5 +1,4 @@
-<?php
-namespace App\Models;
+<?php namespace App\Models;
 
 use CodeIgniter\Model;
 
@@ -11,28 +10,15 @@ class TaskModel extends Model
     protected $allowedFields = [
         'title',
         'description',
-        'status',
-        'due_date',
-        'attachment',
-        'latitude',
-        'longitude',
+        'link',
+        'tag',
+        'coords',
+        'files',
+        'completed',
+        'created_at',
+        'updated_at'
     ];
 
     protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-
-    protected $validationRules = [
-        'title' => 'required|min_length[3]',
-    ];
-
-    protected $validationMessages = [
-        'title' => [
-            'required' => 'Название обязательно',
-            'min_length' => 'Минимум 3 символа в названии',
-        ],
-    ];
-
-    protected $skipValidation = false;
+    protected $returnType = 'array';
 }
-

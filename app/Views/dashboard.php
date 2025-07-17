@@ -165,7 +165,7 @@
         <div class="row g-4">
             <!-- Задачи -->
             <div class="col-12 col-sm-6 col-lg-4">
-                <a href="/tasks_to" class="card-link" data-bubble="tasks">
+                <a href="/tasks" class="card-link" data-bubble="tasks">
                     <div class="card h-100 text-center p-4">
                         <div class="card-body">
                             <svg class="icon-big" viewBox="0 0 16 16"><path d="M2 2.5A.5.5 0 0 1 2.5 2h11a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11zM3 3v10h10V3H3zm2.854 2.146a.5.5 0 0 1 .07.638l-.058.07-2 2a.5.5 0 0 1-.765-.638l.058-.07 1.147-1.147-1.146-1.147a.5.5 0 0 1 .638-.765l.07.058 2 2zm4.292 4.292a.5.5 0 0 1 .638.058l.07.07a.5.5 0 0 1-.638.765l-.07-.058-2-2a.5.5 0 0 1 .07-.765l.07.058L10 9.293zm2.853-5.647a.5.5 0 0 1 .07.638l-.07.07-2 2a.5.5 0 0 1-.765-.639l.07-.07L12.293 4.354a.5.5 0 0 1 .707-.707z"/></svg>

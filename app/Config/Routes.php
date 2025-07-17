@@ -19,12 +19,11 @@ $routes->get('debugger',    'Dashboard::debugger');
 $routes->get('picker',      'Dashboard::picker');
 
 // Task API
-$routes->group('api/task', function($routes) {
-    $routes->get('/', 'Task::index');              // ?status=&due_date=&label=&search=
-    $routes->post('create', 'Task::create');       // создать задачу
-    $routes->put('update/(:num)', 'Task::update/$1'); // обновить
-    $routes->delete('delete/(:num)', 'Task::delete/$1'); // удалить
-});
+$routes->get   ('/tasks', 'TaskController::index');
+$routes->get   ('/tasks/list', 'TaskController::list');
+$routes->post  ('/tasks/create', 'TaskController::create');
+$routes->put   ('/tasks/update/(:num)', 'TaskController::update/$1');
+$routes->delete('/tasks/delete/(:num)', 'TaskController::delete/$1');
 
 
 
