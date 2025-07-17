@@ -1,131 +1,44 @@
-// jQuery MakerTask Plugin
-(function($) {
-  $.fn.makerTask = function(options) {
+(function ($) {
+  $.fn.makerTask = function (options) {
     const settings = $.extend({
-      storageKey: 'makerTasks',
-      defaultTheme: 'dark'
+      storageKey: 'makerTasks'
     }, options);
 
-    const $container = this;
+    const $container = $(this);
+    const $list = $container.find('.task-list');
     let tasks = [];
-    let currentFilter = 'all';
-    let searchQuery = '';
-
-    var currentDate = new Date();
-    var CurDay = currentDate.getDate();
-    var CurMonth = (currentDate.getMonth() < 10)?'0'+currentDate.getMonth():currentDate.getMonth();
-    var CurYear = currentDate.getFullYear();
-    var CurHours = currentDate.getHours();
-    var CurMinutes = currentDate.getMinutes();
-    var CurSeconds = currentDate.getSeconds();
-    var formatTaskDate = CurDay+'.'+CurMonth+'.'+CurYear+', '+CurHours+':'+CurMinutes+':'+CurSeconds;
-
-    function loadTasks() {
-      const saved = localStorage.getItem(settings.storageKey);
-      tasks = saved ? JSON.parse(saved) : [];
-    }
 
     function saveTasks() {
       localStorage.setItem(settings.storageKey, JSON.stringify(tasks));
-      syncWithServer();
     }
 
-    function SortByPriority(a, b){ 
-      var aName = a.priority.toLowerCase();
-      var bName = b.priority.toLowerCase(); 
-      return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+    function loadTasks() {
+      const stored = localStorage.getItem(settings.storageKey);
+      tasks = stored ? JSON.parse(stored) : [];
     }
 
-    function renderTasksFromStorage() {
-      const tasks = JSON.parse(localStorage.getItem(settings.storageKey) || '[]');
-      const $list = $container.find('.task-list');
+    function renderTasks(filter = 'all') {
       $list.empty();
-
-      tasks.forEach(task => {
-        const card = renderTasks(task);
-        $list.append(card);
-      });
-    }
-
-    function syncWithServer() {
-      const localTasks = JSON.parse(localStorage.getItem(settings.storageKey) || '[]');
-
-      // Сначала отправим локальные изменения (например, новые или изменённые задачи)
-      const syncPromises = localTasks.map(task => {
-        if (task._synced === false) {
-          // Новая или обновлённая задача
-          if (task.id) {
-            return $.ajax({
-              url: `/tasks/update/${task.id}`,
-              type: 'PUT',
-              contentType: 'application/json',
-              data: JSON.stringify(task)
-            });
-          } else {
-            return $.ajax({
-              url: '/tasks/create',
-              type: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify(task),
-              success: (res) => {
-                task.id = res.id;
-              }
-            });
-          }
-        }
-
-        return Promise.resolve(); // уже синхронизированная задача
-      });
-
-      // После всех отправок — обновим localStorage с сервера
-      Promise.all(syncPromises).then(() => {
-        // Запрос актуального состояния с сервера
-        $.getJSON('/tasks/list', function(serverTasks) {
-          if (Array.isArray(serverTasks)) {
-            // Отметим все как синхронизированные
-            serverTasks.forEach(task => (task._synced = true));
-            localStorage.setItem(settings.storageKey, JSON.stringify(serverTasks));
-            renderTasksFromStorage();
-            console.log('Синхронизация завершена');
-          }
-        });
-      }).catch(() => {
-        console.warn('Ошибка при синхронизации изменений с сервером');
-      });
-    }
+      const today = new Date().toISOString().split('T')[0];
 
 
-    function renderTasks() {
-      const list = $(document).find('.task-list');
-      $(list).empty();
 
-      const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
-
-      let filtered = tasks.filter(t => {
-        if (currentFilter === 'today') return t.date.startsWith(todayStr) && !t.completed;
-        if (currentFilter === 'completed') return t.completed;
-        return true;
-      });
-
-      if (searchQuery) {
-        filtered = filtered.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      let filtered = tasks;
+      if (filter === 'today') {
+        filtered = tasks.filter(t => t.created_at?.startsWith(today));
+      } else if (filter === 'completed') {
+        filtered = tasks.filter(t => t.completed);
       }
 
-      filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-      // filtered.sort(SortByPriority);
-
-      if (!filtered.length) {
-        $(list).append('<p class="text-muted">Задач нет.</p>');
-        return;
-      }
-    
       $.each(filtered, function(_, task) {
         const priorityLabel = task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success';
         const checkedAttr = task.completed ? 'checked' : '';
         const textDecoration = task.completed ? 'text-decoration-line-through opacity-50' : '';
 
-
+        if(typeof(task.priority) === 'undefined'){task.priority = 'def';}
+        if(task.files.length < 1){
+          task.files = [];
+        }
 
         const $card = $(`
           <div class="card mb-2 bg-dark text-white border-secondary w-100" data-id="${task.id}">
@@ -231,7 +144,7 @@
 
 
         if (task.completed) $card.addClass('completed');
-          $(list).append($card);
+          $list.append($card);
 
         var alert_class = '';
         if(new Date(task.date) < new Date() && !$card.hasClass('completed')){
@@ -240,106 +153,77 @@
         }
       });
 
-      // обработчик чекбоксов
-      $(document).find('.complete-checkbox').on('change', function () {
-        const id = $(this).data('id');
-        const task = tasks.find(t => t.id === id);
-        if (task) {
-          const completed = this.checked;
-          task.completed = completed;
+    }
 
-          const card = $(this).closest('.card');
-          var audio = new Audio('/assets/correctch.mp3');
-          audio.play();
-
-          // добавим анимацию
-          $(card).addClass(completed ? 'task-completed-anim' : 'task-uncompleted-anim');
-
-          // удалим анимацию через 1s
-          setTimeout(() => $(card).removeClass('task-completed-anim task-uncompleted-anim'), 1000);
-
-          saveTasks();
-          renderTasks(); // Обновим весь список
-        }
+    function bindEvents() {
+      // Tabs
+      $('.ndoundtabs').on('click', function () {
+        $('.ndoundtabs').removeClass('active');
+        $(this).addClass('active');
+        const filter = $(this).data('filter');
+        renderTasks(filter);
       });
 
-
-      // $(document).sortable({
-      //   update: function () {
-      //     const newOrder = [];
-      //     $(this).children('.card').each(function () {
-      //       const id = $(this).attr('data-id');
-      //       const task = tasks.find(t => t.id == id);
-      //       if (task) newOrder.push(task);
-      //     });
-      //     tasks = newOrder;
-      //     saveTasks();
-      //   }
-      // });
-    }
-
-
-
-    function applyTheme(theme) {
-      // if(theme === 'light'){theme = 'dark';}
-      // if(theme === 'dark'){theme = 'light';}
-      $('body').removeClass('dark').removeClass('light').addClass(theme);
-      localStorage.setItem('theme', theme);
-    }
-
-    function exportTasks() {
-      const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'tasks.json';
-      a.click();
-    }
-
-    function importTasks(file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (Array.isArray(imported)) {
-            tasks = imported;
-            saveTasks();
-            renderTasks();
-          }
-        } catch (err) {
-          alert('Ошибка при импорте задач.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function initEvents() {
-
-      $(document).on('click', '.edit-task', function(e) {
-        e.preventDefault();
-        const id = $(this).data('id');
-        const $card = $(this).closest('.card');
-        const $form = $card.find('.edit-form-wrapper');
-        $('.task-details').slideUp();
-        $('.edit-form-wrapper').hide('slow'); // сворачиваем остальные
-        $form.show();
-      });
-
-
+      // Toggle description
       $(document).on('click', '.task-title', function () {
         const $card = $(this).closest('.card');
         const $details = $card.find('.task-details');
         const $arrow = $(this).find('.arrow');
 
-        // Спрячем другие спойлеры
         $('.task-details').not($details).slideUp();
         $('.arrow').not($arrow).removeClass('rotated');
 
-        // Показать / скрыть текущий
         $details.slideToggle(200);
         $arrow.toggleClass('rotated');
       });
 
+      // Delete task
+      $(document).on('click', '.delete-task', function () {
+        const id = $(this).closest('.card').data('id');
+        tasks = tasks.filter(t => t.id !== id);
+        saveTasks();
+        renderTasks($('.ndoundtabs.active').data('filter'));
+      });
+
+      // Toggle completed
+      $(document).on('click', '.toggle-completed', function () {
+        const $card = $(this).closest('.card');
+        const id = $card.data('id');
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+          task.completed = !task.completed;
+          saveTasks();
+          renderTasks($('.ndoundtabs.active').data('filter'));
+        }
+      });
+
+      // Edit form
+      $(document).on('click', '.edit-task', function (e) {
+        e.preventDefault();
+        const $card = $(this).closest('.card');
+        const $form = $card.find('.edit-form-wrapper');
+        $('.edit-form-wrapper').not($form).hide('fast');
+        $form.toggle();
+      });
+
+      // Save edit
+      $(document).on('click', '.save-edit', function () {
+        const $card = $(this).closest('.card');
+        const id = $card.data('id');
+        const task = tasks.find(t => t.id === id);
+        if (task) {
+          task.title = $card.find('.edit-title').val();
+          task.description = $card.find('.edit-description').val();
+          task.link = $card.find('.edit-link').val();
+          task.tag = $card.find('.edit-tag').val();
+          task.updated_at = new Date().toISOString();
+          saveTasks();
+          renderTasks($('.ndoundtabs.active').data('filter'));
+        }
+      });
+    }
+
+    function setupForm() {
       $(document).find('#taskForm').on('submit', function(e) {
         e.preventDefault();
         const title = $('#taskTitle').val();
@@ -357,129 +241,24 @@
           files: $('#taskFiles')[0].files.length
             ? Array.from($('#taskFiles')[0].files).map(f => f.name)
             : [],
-          completed: false,
+          completed: false
         };
-        // task._synced = false;
         tasks.unshift(task);
         saveTasks();
         this.reset();
         renderTasks();
         syncWithServer();
       });
-
-      $(document).on('click', '.complete-btn', function() {
-        const id = $(this).data('id');
-        const task = tasks.find(t => t.id === id);
-        if (task) {
-          task.completed = true;
-          renderTasks();
-          saveTasks();
-          syncWithServer(); 
-        }
-      });
-
-      $(document).on('click', '.delete-task', function() {
-        const id = $(this).data('id');
-        tasks = tasks.filter(t => t.id !== id);
-        saveTasks();
-        renderTasks();
-      });
-
-      $(document).on('click', '.edit-task', function() {
-        const id = $(this).data('id');
-        const task = tasks.find(t => t.id === id);
-        if (task) showEditModal(task);
-      });
-
-      $(document).find('#searchInput').on('input', function() {
-        searchQuery = $(this).val();
-        renderTasks();
-      });
-
-      $('body').find('#tabList .nav-link').on('click', function(e) {
-        e.preventDefault();
-        $container.find('#tabList .nav-link').removeClass('active');
-        $(this).addClass('active');
-        currentFilter = $(this).data('filter');
-        renderTasks();
-      });
-
-      $('#themeToggle').on('click', function() {
-        const theme = $('body').hasClass('dark') ? 'light' : 'dark';
-        applyTheme(theme);
-      });
-
-      $('#editForm').on('submit', function(e) {
-        e.preventDefault();
-        const id = parseInt($('#editTaskId').val());
-        const task = tasks.find(t => t.id === id);
-        if (task) {
-          task.title = $('#editTaskTitle').val();
-          task.date = $('#editTaskDate').val();
-          // task._synced = false;
-          task.priority = $('#editTaskPriority').val();
-          saveTasks();
-          renderTasks();
-          $('#editModal').modal('hide');
-        }
-      });
-
-      $(document).on('submit', '.edit-inline-form', function(e) {
-        e.preventDefault();
-        const $form = $(this);
-        const $card = $form.closest('.card');
-        const id = parseInt($card.data('id'));
-        const task = tasks.find(t => t.id === id);
-
-        if (task) {
-          task.title = $form.find('.edit-title').val();
-          task.date = $form.find('.edit-date').val();
-          task.priority = $form.find('.edit-priority').val();
-          task.description = $form.find('.edit-description').val();
-          task.link = $form.find('.edit-link').val();
-          task.tag = $form.find('.edit-tag').val();
-          task.coords = $form.find('.edit-coords').val();
-          const filesInput = $form.find('.edit-files')[0];
-          task.files = filesInput?.files.length
-            ? Array.from(filesInput.files).map(f => f.name)
-            : task.files;
-
-          saveTasks();
-          renderTasks();
-        }
-      });
-
-
-      $('#exportTasks').on('click', function() {
-        exportTasks();
-      });
-
-      $('#importTasks').on('change', function(e) {
-        const file = e.target.files[0];
-        if (file) importTasks(file);
-      });
-    }
-
-
-    function initTheme() {
-      // const theme = localStorage.getItem('theme') || settings.defaultTheme;
-      // applyTheme(theme);
     }
 
     function init() {
       loadTasks();
-      renderTasksFromStorage();
-      initTheme();
-      initEvents();
-      renderTasks();
-      setInterval(syncWithServer, 180000);
+      renderTasks('all');
+      bindEvents();
+      setupForm();
     }
 
     init();
     return this;
   };
-
-  $(function() {
-    $('#makerTaskApp').makerTask();
-  });
 })(jQuery);

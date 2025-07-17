@@ -80,9 +80,9 @@
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="completed">Выполнено</a></li>
       </ul>
 
-<div id="taskContainer">
-  <div class="task-list"></div>
-</div>
+    <div id="taskContainer">
+      <div class="task-list"></div>
+    </div>
 
     </div>
   </div>
