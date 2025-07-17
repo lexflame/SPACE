@@ -69,6 +69,19 @@
       color: #CCC;
       border: 1px solid #cccccc66;
     }
+    .alert_task {
+      background-color: #3c0b0b !important;
+    }
+    .disabled {
+      display: none !important;
+      opacity: 0;
+    }
+    .arrow {
+      display: inline-block;
+    }
+    .arrow.rotated {
+      transform: rotate(180deg);
+    }
     /*body #makerTaskApp * {
       -webkit-transition: all 0.5s linear;
       -moz-transition: all 0.5s linear;
