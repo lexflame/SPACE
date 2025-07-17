@@ -80,9 +80,9 @@
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="completed">Выполнено</a></li>
       </ul>
 
-      <div class="task-list">
-        
-      </div>
+<div id="taskContainer">
+  <div class="task-list"></div>
+</div>
 
     </div>
   </div>
@@ -90,13 +90,15 @@
   <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/assets/maker-task.plugin.js"></script>
-  <div id="taskContainer"></div>
-  <script>
+<script>
+  
+  $(function() {
     $('#taskContainer').makerTask({
-      storageKey: 'makerTasks',
-      defaultTheme: 'dark'
+      apiUrl: '/tasks',          // API CodeIgniter
+      storageKey: 'makerTasks'
     });
-  </script>
+  });
+</script>
   <script>
     $(document).ready(function() {
        $('.today_btn').click();

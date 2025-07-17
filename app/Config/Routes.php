@@ -24,7 +24,7 @@ $routes->get   ('/tasks/list', 'TaskController::list');
 $routes->post  ('/tasks/create', 'TaskController::create');
 $routes->put   ('/tasks/update/(:num)', 'TaskController::update/$1');
 $routes->delete('/tasks/delete/(:num)', 'TaskController::delete/$1');
-
+// $routes->get('/tasks/view/(:num)', 'TaskController::view/$1'); - отдельная задача
 
 
 
