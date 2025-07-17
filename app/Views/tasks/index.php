@@ -90,6 +90,7 @@
   <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/assets/maker-task.plugin.js"></script>
+  <div id="taskContainer"></div>
   <script>
     $('#taskContainer').makerTask({
       storageKey: 'makerTasks',
