@@ -1,97 +1,116 @@
 (function($) {
-  $.fn.minuteGrid = function(options) {
-    const settings = $.extend({
-      stepPx: 100, // шаг сетки (соответствует 1')
-      showLabels: true,
-      color: 'rgba(0,0,0,0.5)',
-      labelColor: '#fff',
-      zIndex: 5,
-      scale: 1 // внешний масштаб (scale), если нужно
-    }, options);
+  // Класс MinuteGrid
+  class MinuteGrid {
+    constructor($map, options) {
+      this.$map = $map;
+      this.settings = $.extend({
+        stepPx: 100, // 1 минута = 100px
+        showLabels: true,
+        color: 'rgba(0,0,0,0.5)',
+        labelColor: '#fff',
+        zIndex: 5,
+        scale: 1
+      }, options);
 
-    const $map = $(this);
-    let $grid = $('<div class="minute-grid"></div>').css({
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      pointerEvents: 'none',
-      zIndex: settings.zIndex
-    });
+      this.$grid = $('<div class="minute-grid"></div>').css({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: this.settings.zIndex
+      });
 
-    $map.append($grid);
+      this.$map.css('position', 'relative'); // Чтобы grid позиционировался правильно
+      this.$map.append(this.$grid);
 
-    function renderGrid() {
-      $grid.empty();
+      this.renderGrid();
+    }
 
-      const width = $map.width() * settings.scale;
-      const height = $map.height() * settings.scale;
-      const step = settings.stepPx * settings.scale;
+    renderGrid() {
+      const { stepPx, showLabels, color, labelColor, scale } = this.settings;
+      const width = this.$map.width() * scale;
+      const height = this.$map.height() * scale;
+      const step = stepPx * scale;
 
-      // Горизонтальные линии
+      this.$grid.empty();
+
+      // Горизонтальные линии и подписи
       for (let y = 0; y <= height; y += step) {
-        const $line = $('<div class="minute-line"></div>').css({
+        this.$grid.append($('<div class="minute-line"></div>').css({
           position: 'absolute',
           top: y + 'px',
           left: 0,
           width: '100%',
           height: '1px',
-          backgroundColor: settings.color
-        });
-        $grid.append($line);
+          backgroundColor: color
+        }));
 
-        if (settings.showLabels) {
-          const $label = $('<div class="minute-label"></div>').text(`${Math.round(y / step)}′`).css({
+        if (showLabels) {
+          this.$grid.append($('<div class="minute-label"></div>').text(`${Math.round(y / step)}′`).css({
             position: 'absolute',
             top: y + 2 + 'px',
             left: '4px',
             fontSize: '14px',
-            color: settings.labelColor,
+            color: labelColor,
             backgroundColor: 'rgba(0,0,0,0.4)',
             padding: '1px 3px',
             borderRadius: '3px'
-          });
-          $grid.append($label);
+          }));
         }
       }
 
-      // Вертикальные линии
+      // Вертикальные линии и подписи
       for (let x = 0; x <= width; x += step) {
-        const $line = $('<div class="minute-line"></div>').css({
+        this.$grid.append($('<div class="minute-line"></div>').css({
           position: 'absolute',
           top: 0,
           left: x + 'px',
           width: '1px',
           height: '100%',
-          backgroundColor: settings.color
-        });
-        $grid.append($line);
+          backgroundColor: color
+        }));
 
-        if (settings.showLabels) {
-          const $label = $('<div class="minute-label"></div>').text(`${Math.round(x / step)}′`).css({
+        if (showLabels) {
+          this.$grid.append($('<div class="minute-label"></div>').text(`${Math.round(x / step)}′`).css({
             position: 'absolute',
             top: '2px',
             left: x + 2 + 'px',
             fontSize: '14px',
-            color: settings.labelColor,
-            backgroundColor: 'rgba(0,0,0,0.4)',
+            color: labelColor,
+            backgroundColor: 'rgba(0,0,0)',
             padding: '1px 3px',
             borderRadius: '3px'
-          });
-          $grid.append($label);
+          }));
         }
       }
     }
 
-    // Метод для обновления сетки при зуме или ресайзе
-    this.updateMinuteGrid = function(newScale = 1) {
-      settings.scale = newScale;
-      renderGrid();
-      $('#map-background')[0].updateMinuteGrid(scale);
-    };
+    update(newScale = 1) {
+      this.settings.scale = newScale;
+      this.renderGrid();
+    }
+  }
 
-    renderGrid();
-    return this;
+  // jQuery-плагин
+  $.fn.minuteGrid = function(methodOrOptions, ...args) {
+    return this.each(function() {
+      const $this = $(this);
+      let instance = $this.data('minuteGrid');
+
+      if (!instance) {
+        // инициализация
+        if (typeof methodOrOptions === 'object' || !methodOrOptions) {
+          instance = new MinuteGrid($this, methodOrOptions);
+          $this.data('minuteGrid', instance);
+        }
+      } else {
+        // вызов метода
+        if (typeof methodOrOptions === 'string' && typeof instance[methodOrOptions] === 'function') {
+          instance[methodOrOptions](...args);
+        }
+      }
+    });
   };
 })(jQuery);

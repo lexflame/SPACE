@@ -93,5 +93,13 @@ html, body {
 }
 
 .minute-grid {
-  mix-blend-mode: overlay;
+  opacity: 0.8;
+  /*mix-blend-mode: overlay;*/
+}
+.minute-ruler div {
+  position: absolute;
+  color: #fff;
+  font-family: monospace;
+  white-space: nowrap;
+  font-size: 11px;
 }
