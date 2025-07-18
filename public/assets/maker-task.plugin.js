@@ -5,7 +5,7 @@
     }, options);
 
     const $container = $(this);
-    const $list = $container.find('.task-list');
+    const $list = $('.task-list');
     let tasks = [];
 
     function saveTasks() {
@@ -18,17 +18,29 @@
     }
 
     function renderTasks(filter = 'all') {
+      
+      const list = $('.task-list');
       $list.empty();
-      const today = new Date().toISOString().split('T')[0];
+
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
 
 
 
-      let filtered = tasks;
-      if (filter === 'today') {
-        filtered = tasks.filter(t => t.created_at?.startsWith(today));
-      } else if (filter === 'completed') {
-        filtered = tasks.filter(t => t.completed);
+      let filtered = tasks.filter(t => {
+        if (filter === 'today') return t.date.startsWith(todayStr) && !t.completed;
+        if (filter === 'completed') return t.completed;
+        return true;
+      });
+
+      console.log(filtered)
+
+      if (!filtered.length) {
+        $('.task-list').append('<p class="text-muted">Задач нет.</p>');
+        return;
       }
+
+      filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
 
       $.each(filtered, function(_, task) {
         const priorityLabel = task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'success';
@@ -49,7 +61,7 @@
 
                 <!-- Чекбокс -->
                 <div class="custom-control custom-checkbox mr-3">
-                  <input type="checkbox" class="custom-control-input complete-checkbox" id="check-${task.id}" data-id="${task.id}" ${checkedAttr}>
+                  <input type="checkbox" class="toggle-completed custom-control-input complete-checkbox" id="check-${task.id}" data-id="${task.id}" ${checkedAttr}>
                   <label class="custom-control-label" for="check-${task.id}"></label>
                 </div>
 
@@ -250,6 +262,31 @@
         syncWithServer();
       });
     }
+
+    $(document).on('submit', '.edit-inline-form', function(e) {
+      e.preventDefault();
+      const $form = $(this);
+      const $card = $form.closest('.card');
+      const id = parseInt($card.data('id'));
+      const task = tasks.find(t => t.id === id);
+
+      if (task) {
+        task.title = $form.find('.edit-title').val();
+        task.date = $form.find('.edit-date').val();
+        task.priority = $form.find('.edit-priority').val();
+        task.description = $form.find('.edit-description').val();
+        task.link = $form.find('.edit-link').val();
+        task.tag = $form.find('.edit-tag').val();
+        task.coords = $form.find('.edit-coords').val();
+        const filesInput = $form.find('.edit-files')[0];
+        task.files = filesInput?.files.length
+          ? Array.from(filesInput.files).map(f => f.name)
+          : task.files;
+
+        saveTasks();
+        renderTasks();
+      }
+    });
 
     function init() {
       loadTasks();

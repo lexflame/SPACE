@@ -177,7 +177,7 @@
             </div>
             <!-- Карты -->
             <div class="col-12 col-sm-6 col-lg-4">
-                <a href="<?= site_url('mapmanager') ?>" class="card-link" data-bubble="maps">
+                <a href="/tacmap" class="card-link" data-bubble="maps">
                     <div class="card h-100 text-center p-4">
                         <div class="card-body">
                             <svg class="icon-big" viewBox="0 0 16 16"><path d="M15.817.113A.5.5 0 0 1 16 .5v13.981a.5.5 0 0 1-.683.474l-4.53-1.78-5.573 1.792a.5.5 0 0 1-.348 0L.183 15.887A.5.5 0 0 1 0 15.5V1.519a.5.5 0 0 1 .683-.474l4.53 1.78 5.573-1.792a.5.5 0 0 1 .348 0l5.683 2.08zm-5.657 1.818-5 1.606v11.042l5-1.607V1.93zm1 .011v11.04l4 1.572V2.514l-4-1.573zM1 2.514v11.041l4 1.573V3.928L1 2.514z"/></svg>

@@ -1,0 +1,89 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #000;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/*#map-background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 0;
+}*/
+
+.top-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 56px;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+  width: 24%;
+  border-radius: 9px;
+}
+
+.left-sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 70px;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  height: calc(100vh);
+  min-width: 70px;
+  max-width: 70px;
+}
+
+.left-sidebar .btn {
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.right-toolbar {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 9px;
+}
+
+.right-toolbar .btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#map-background {
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+#map-wrapper {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  cursor: grab;
+}
+
+#map-background {
+  width: 2000px; /* Широкая карта */
+  height: 2000px;
+  background-image: url('https://i.imgur.com/GuAqa2p.jpeg');
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.2s ease-out;
+  will-change: transform;
+}

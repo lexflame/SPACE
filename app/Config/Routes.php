@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
 // $routes = Services::routes();
 
 // Default
-$routes->get('tasks_to', 'Pages::tasks'); // страница задач
+// $routes->get('tasks_to', 'Pages::tasks'); // страница задач
 
 /**
  * @var RouteCollection $routes
@@ -26,5 +26,7 @@ $routes->put   ('/tasks/update/(:num)', 'TaskController::update/$1');
 $routes->delete('/tasks/delete/(:num)', 'TaskController::delete/$1');
 // $routes->get('/tasks/view/(:num)', 'TaskController::view/$1'); - отдельная задача
 
+$routes->get('tacmap', 'Tacmap::index');
+$routes->get('tacmap/data', 'Tacmap::data');
 
 
