@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TACMap</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/assets/tacmap.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/assets/tacmap.css">
   <style>
     .left-sidebar .btn {
       width: 56px;
@@ -40,17 +40,35 @@
   </div>
 
   <!-- Верхняя панель -->
-  <div class="top-bar d-flex justify-content-between align-items-center px-3 py-2">
+  <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4">
     <div class="d-flex align-items-center">
-      <button class="btn btn-outline-light mr-2"><i class="fas fa-cube"></i> Маркеры </button>
-      <button class="btn btn-outline-light"><i class="fas fa-map"></i> Другие карты</button>
+      <button class="btn btn-outline-light mr-2"><i class="fas fa-cube"></i> Маркеры</button>
+      <button class="btn btn-outline-light mr-2"><i class="fas fa-map"></i> Карты</button>
+
+      <!-- Выпадающее меню -->
+      <div class="dropdown">
+        <button class="btn btn-outline-light dropdown-toggle" type="button" id="mainMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="mainMenuDropdown">
+          <a class="dropdown-item" href="/"><i class="fas fa-cube mr-2"></i>В Пространство</a>
+          <a class="dropdown-item" href="/tasks"><i class="fas fa-tasks mr-2"></i>Задачи</a>
+          <a class="dropdown-item" href="/tacmap"><i class="fas fa-map-marked-alt mr-2"></i>Карты</a>
+          <a class="dropdown-item" href="/notes"><i class="fas fa-sticky-note mr-2"></i>Заметки</a>
+          <a class="dropdown-item" href="/debug"><i class="fas fa-bug mr-2"></i>Отладчик</a>
+          <a class="dropdown-item" href="/wicker"><i class="fas fa-rss mr-2"></i>Викер</a>
+        </div>
+      </div>
     </div>
+
     <div class="d-flex align-items-center">
-      <button class="btn btn-outline-light mr-2"><i class="fas fa-users"></i></button>
       <div class="badge badge-success mr-2">1</div>
-      <button class="btn btn-outline-light"><i class="fas fa-bars"></i></button>
+      <button class="btn btn-outline-light mr-2"><i class="fas fa-users"></i></button>
+      
+      <!-- <button class="btn btn-outline-light dropdown-toggle" type="button" id="mainMenuDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button> -->
     </div>
   </div>
+
 
   <!-- Левый сайдбар -->
   <div class="left-sidebar d-flex flex-column align-items-center p-2 text-center">
@@ -97,11 +115,27 @@
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/assets/tacmap.plugin.js"></script>
-<script>
-  $(function() {
-    $(document).tacMap(); // инициализация
-  });
-</script>
+  <!-- инициализация tacMap -->
+  <script>
+    $(function() {
+      $(document).tacMap(); 
+    });
+  </script>
+  <script src="/assets/minute-frame.plugin.js"></script>
+  <!-- инициализация minuteGrid -->
+  <script>
+    $('#map-background').minuteGrid({
+      stepPx: 100,
+      showLabels: true,
+      scale: 1
+    });
+  </script>
+  <script>
+    $(document).on('contextmenu', function(e) {
+      e.preventDefault();
+    });  
+  </script>
 </body>
 </html>

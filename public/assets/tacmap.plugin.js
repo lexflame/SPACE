@@ -47,8 +47,8 @@
       const minX = containerW - mapW;
       const minY = containerH - mapH;
 
-      console.log(translate.x)
-      console.log(translate.y)
+      // console.log(translate.x)
+      // console.log(translate.y)
       translate.x = clamp(translate.x, minX, maxX);
       translate.y = clamp(translate.y, minY, maxY);
     }
@@ -79,7 +79,7 @@
 
     // Масштабирование колесом под курсором
     $(wrapper).on('mousewheel', function (e) {
-      console.log(e)
+      // console.log(e)
       e.preventDefault();
       
       const delta = e.originalEvent.deltaY < 0 ? 0.1 : -0.1;
@@ -98,6 +98,7 @@
     });
 
     function init() {
+
       console.log('TACMap initialized');
       fetchData();
     }

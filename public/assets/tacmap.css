@@ -23,7 +23,7 @@ html, body {
   right: 0;
   height: 56px;
   background-color: rgba(0, 0, 0, 0.8);
-  z-index: 10;
+  z-index: 14;
   width: 24%;
   border-radius: 9px;
 }
@@ -78,12 +78,20 @@ html, body {
   cursor: grab;
 }
 
-#map-background {
-  width: 2000px; /* Широкая карта */
-  height: 2000px;
-  background-image: url('https://i.imgur.com/GuAqa2p.jpeg');
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.2s ease-out;
-  will-change: transform;
+.minute-grid {
+  pointer-events: none;
+}
+
+.minute-label {
+  font-family: monospace;
+  user-select: none;
+  text-shadow: 1px 1px 2px #000;
+}
+.minute-label {
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.minute-grid {
+  mix-blend-mode: overlay;
 }
