@@ -34,6 +34,26 @@
   </style>
 </head>
 <body>
+
+    <div id="page-fadeout"></div>
+    <style>
+        #page-fadeout {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: #000;
+          opacity: 0;
+          pointer-events: none;
+          z-index: 9999;
+          transition: opacity 0.6s ease;
+        }
+        #page-fadeout.show {
+          opacity: 1;
+          pointer-events: auto;
+        }
+    </style>
   <!-- Фон карты -->
   <div id="map-wrapper">
     <div id="map-background"></div>
@@ -137,5 +157,21 @@
       e.preventDefault();
     });  
   </script>
+    <script>
+      // Переход при клике по ссылке
+      $(document).on('click', 'a[href]:not([target="_blank"]):not([href^="#"])', function(e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
+        $('#page-fadeout').addClass('show');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 600);
+      });
+
+      // Переход при обновлении/перезагрузке
+      window.addEventListener('beforeunload', () => {
+        document.getElementById('page-fadeout').classList.add('show');
+      });
+    </script>
 </body>
 </html>

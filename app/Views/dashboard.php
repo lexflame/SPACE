@@ -1,12 +1,66 @@
 <!DOCTYPE html>
-<html lang="ru" data-bs-theme="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SPACE</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Sci-Fi Parallax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        html, body {
+          margin: 0;
+          height: 100%;
+          background: #000;
+          overflow-x: hidden;
+          font-family: 'Orbitron', sans-serif;
+          /*color: #00faff;*/
+          cursor: none !important;
+        }
+        body * {
+            cursor: none !important;
+        }
+
+        canvas {
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .layer {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background-size: cover;
+          background-position: center;
+          z-index: 1;
+        }
+
+        .content {
+          position: relative;
+          z-index: 10;
+          height: 400vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          color: #00faff;
+          text-align: center;
+        }
+
+        h1 {
+          font-size: 4rem;
+          text-shadow: 0 0 10px #00faff, 0 0 30px #00faff;
+        }
+
+        p {
+          font-size: 1.2rem;
+          color: #b0fefe;
+        }
         html, body { min-height: 100vh; background: transparent; }
         body { position: relative; overflow-x: hidden; }
         .parallax-bg {
@@ -28,12 +82,12 @@
             pointer-events: none;
         }
         /* Индивидуальные цвета пузырей */
-        .bubble1 { background:#ffc107; left:10vw;top:60vh;width:280px;height:280px;}
+        .bubble1 { background:#ffffff; left:10vw;top:60vh;width:280px;height:280px;}
         .bubble2 { background:#46ffd5; right:8vw;top:30vh;width:210px;height:210px;}
         .bubble3 { background:#ffe783; left:38vw;top:10vh;width:140px;height:140px;}
         .bubble4 { background:#0fff; right:30vw;top:80vh;width:110px;height:110px;}
-        .bubble5 { background:#ffc107; right:22vw;top:60vh;width:80px;height:80px;}
-        .bubble6 { background:#382070; left:70vw;top:10vh;width:130px;height:130px;}
+        .bubble5 { background:#46ffd5; right:22vw;top:60vh;width:80px;height:80px;}
+        .bubble6 { background:#ffffff; left:70vw;top:10vh;width:130px;height:130px;}
         /* Эффект волны */
         .bubble.wave {
             box-shadow: 0 0 45px 22px #fff5, 0 0 0px 0px #fff4;
@@ -146,17 +200,52 @@
           background-size: 300% 120%;
           text-shadow: 0 1px 4px #fff6, 0 3px 22px #d0ad5c99;
         }
-
+        canvas#canvas {
+            z-index: 3;
+            opacity: 0.2;
+        }
     </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
+   
+    <div id="page-fadeout"></div>
+    <style>
+        #page-fadeout {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: #000;
+          opacity: 0;
+          pointer-events: none;
+          z-index: 9999;
+          transition: opacity 0.6s ease;
+        }
+        #page-fadeout.show {
+          opacity: 1;
+          pointer-events: auto;
+        }
+    </style>
+
+    <canvas id="canvas"></canvas>
+
     <!-- Параллакс-слой -->
     <div class="parallax-bg">
         <div class="bubble bubble1" data-bubble="tasks"></div>
-        <div class="bubble bubble2" data-bubble="maps"></div>
         <div class="bubble bubble3" data-bubble="notes"></div>
+        
+        <div class="bubble bubble2" data-bubble="maps"></div>
         <div class="bubble bubble4" data-bubble="debugger"></div>
+        
+        <div class="bubble bubble3" data-bubble="notes"></div>
+        
+        <div class="bubble bubble4" data-bubble="debugger"></div>
+        <div class="bubble bubble2" data-bubble="maps"></div>
+        
         <div class="bubble bubble5" data-bubble="picker"></div>
+        
         <div class="bubble bubble6" data-bubble="extra"></div>
     </div>
 
@@ -236,7 +325,186 @@
         </div>
     </div>
 
+    <canvas id="bg"></canvas>
+
+    <div class="content">
+      <h1>Sci-Fi Vectorverse</h1>
+      <p>Welcome to the intersection of technology and infinity</p>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("bg");
+      const ctx = canvas.getContext("2d");
+
+      let width = innerWidth;
+      let height = innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      window.addEventListener("resize", () => {
+        width = innerWidth;
+        height = innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      });
+
+      // Создание точек
+      const nodes = [];
+      const maxNodes = 100;
+      for (let i = 0; i < maxNodes; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2
+        });
+      }
+
+      function drawNetwork() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "#00faff";
+        ctx.strokeStyle = "rgba(0,255,255,0.2)";
+        ctx.lineWidth = 0.5;
+
+        // Движение и соединение
+        for (let i = 0; i < maxNodes; i++) {
+          const n = nodes[i];
+          n.x += n.vx;
+          n.y += n.vy;
+
+          if (n.x < 0 || n.x > width) n.vx *= -1;
+          if (n.y < 0 || n.y > height) n.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          for (let j = i + 1; j < maxNodes; j++) {
+            const m = nodes[j];
+            const dx = n.x - m.x;
+            const dy = n.y - m.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.moveTo(n.x, n.y);
+              ctx.lineTo(m.x, m.y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        drawNetwork();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      // Параллакс при scroll'е
+      window.addEventListener('scroll', () => {
+        const scroll = window.scrollY;
+        canvas.style.transform = `translateY(${scroll * 0.3}px)`;
+      });
+    </script>
     <!-- Интерактив & Параллакс -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    const canvas_light = document.getElementById("canvas");
+    const ctx_light = canvas_light.getContext("2d");
+    let width_light = window.innerWidth;
+    let height_light = window.innerHeight;
+    canvas_light.width = width_light;
+    canvas_light.height = height_light;
+
+    let targetX = width_light / 2;
+    let targetY = height_light / 2;
+    let mouseX = targetX, mouseY = targetY;
+
+    let points = Array.from({ length: 20 }, () => ({
+      x: Math.random() * width_light,
+      y: Math.random() * height_light
+    }));
+
+    function regeneratePoints() {
+      points = Array.from({ length: 20 }, () => ({
+        x: Math.random() * width_light,
+        y: Math.random() * height_light
+      }));
+    }
+
+    setInterval(regeneratePoints, 5000); // Обновляем точки каждые 5 секунд
+
+    window.addEventListener("resize", () => {
+      width_light = window.innerWidth;
+      height_light = window.innerHeight;
+      canvas_light.width = width_light;
+      canvas_light.height = height_light;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    const getColor = () => {
+      const h = ((mouseX + mouseY) / 10) % 360;
+      return `hsl(${h}, 100%, 70%)`;
+    };
+
+    function drawGlowLine(x1, y1, x2, y2, color) {
+      ctx_light.shadowColor = color;
+      ctx_light.shadowBlur = 15;
+      ctx_light.strokeStyle = color;
+      ctx_light.beginPath();
+      ctx_light.moveTo(x1, y1);
+      ctx_light.lineTo(x2, y2);
+      ctx_light.stroke();
+    }
+
+    function draw() {
+      ctx_light.clearRect(0, 0, width_light, height_light);
+      targetX += (mouseX - targetX) * 0.1;
+      targetY += (mouseY - targetY) * 0.1;
+
+      // glowing grid
+      ctx_light.strokeStyle = "rgba(0, 255, 255, 0.1)";
+      for (let x = 0; x < width_light; x += 50) {
+        ctx_light.beginPath();
+        ctx_light.moveTo(x, 0);
+        ctx_light.lineTo(x, height_light);
+        ctx_light.stroke();
+      }
+      for (let y = 0; y < height_light; y += 50) {
+        ctx_light.beginPath();
+        ctx_light.moveTo(0, y);
+        ctx_light.lineTo(width_light, y);
+        ctx_light.stroke();
+      }
+
+      const color = getColor();
+
+      points.forEach(p => {
+        drawGlowLine(p.x, p.y, targetX, targetY, color);
+        points.forEach(p2 => {
+          if (p !== p2 && Math.random() < 0.005) {
+            drawGlowLine(p.x, p.y, p2.x, p2.y, "rgba(255,255,255,0.05)");
+          }
+        });
+      });
+
+      ctx_light.fillStyle = color;
+      ctx_light.shadowBlur = 20;
+      ctx_light.shadowColor = color;
+      ctx_light.beginPath();
+      ctx_light.arc(targetX, targetY, 5, 0, Math.PI * 2);
+      ctx_light.fill();
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
     <script>
         // Параллакс пузырей
         const bubbles = Array.from(document.querySelectorAll('.bubble'));
@@ -316,6 +584,21 @@
             });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Переход при клике по ссылке
+      $(document).on('click', 'a[href]:not([target="_blank"]):not([href^="#"])', function(e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
+        $('#page-fadeout').addClass('show');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 600);
+      });
+
+      // Переход при обновлении/перезагрузке
+      window.addEventListener('beforeunload', () => {
+        document.getElementById('page-fadeout').classList.add('show');
+      });
+    </script>
 </body>
 </html>

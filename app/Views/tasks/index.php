@@ -16,6 +16,26 @@
   <link rel="stylesheet" href="/assets/makerTask-responsive.css"/>
 </head>
 <body class="dark">
+
+    <div id="page-fadeout"></div>
+    <style>
+        #page-fadeout {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: #000;
+          opacity: 0;
+          pointer-events: none;
+          z-index: 9999;
+          transition: opacity 0.6s ease;
+        }
+        #page-fadeout.show {
+          opacity: 1;
+          pointer-events: auto;
+        }
+    </style>
   <!-- Верхняя панель -->
   <div class="toolbar" id="toolbar">
 
@@ -107,5 +127,21 @@
   <audio id="sound" preload="auto">
    <source src="/assets/correctch.mp3" type="audio/mpeg">
   </audio>
+    <script>
+      // Переход при клике по ссылке
+      $(document).on('click', 'a[href]:not([target="_blank"]):not([href^="#"])', function(e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
+        $('#page-fadeout').addClass('show');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 600);
+      });
+
+      // Переход при обновлении/перезагрузке
+      window.addEventListener('beforeunload', () => {
+        document.getElementById('page-fadeout').classList.add('show');
+      });
+    </script>
 </body>
 </html>
