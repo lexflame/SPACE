@@ -7,6 +7,7 @@
     const $container = $(this);
     const $list = $('.task-list');
     let tasks = [];
+    let sync_tasks = [];
 
     function saveTasks() {
       localStorage.setItem(settings.storageKey, JSON.stringify(tasks));
@@ -16,6 +17,66 @@
       const stored = localStorage.getItem(settings.storageKey);
       tasks = stored ? JSON.parse(stored) : [];
     }
+
+    function syncToServer( sync = false ) {
+      var status = (tasks.length > 0 && sync === false)?0:1;
+      const unsyncedTasks = tasks.filter(task => !task._synced);
+
+      if (unsyncedTasks.length === 0 && status === 0) return;
+
+      
+      // console.log(JSON.stringify(unsyncedTasks))
+
+      $.ajax({
+        url: '/tasks/sync/'+status,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(unsyncedTasks),
+        success: function (response) {
+          // Помечаем как синхронизированные
+          unsyncedTasks.forEach(t => t._synced = true);
+          saveTasks();
+          if(status === 0){
+            console.log(`[Sync] Отправлено: ${unsyncedTasks.length} задач`);
+          }else{
+            if(response.upData.length > 0){
+              tasks = []
+              localStorage.setItem(settings.storageKey, JSON.stringify(tasks))
+            }
+            $.each(response.upData, function(_,task) {
+              var inTask = JSON.parse(task)
+              const title = inTask.title;
+              const date = inTask.date;
+              const priority = inTask.priority;
+              const syntask = {
+                id: inTask.id,
+                title,
+                date,
+                priority,
+                description: inTask.description,
+                link: inTask.link,
+                tag: inTask.tag,
+                coords: inTask.coords,
+                files: inTask.files,
+                completed: inTask.completed,
+                synced: inTask.synced,
+                _synced: inTask._synced,
+              };
+              tasks.unshift(syntask);
+              saveTasks();
+            });
+          }
+        },
+        error: function (xhr) {
+          console.error('[Sync] Ошибка при синхронизации:', xhr.responseText);
+        }
+      });
+      renderTasks();
+      $('#makerTaskApp').fadeOut('slow')
+        $('.today_btn').click();
+      $('#makerTaskApp').fadeIn('slow')
+    }
+
 
     function renderTasks(filter = 'all') {
       
@@ -33,7 +94,7 @@
         return true;
       });
 
-      console.log(filtered)
+      // console.log(filtered)
 
       if (!filtered.length) {
         $('.task-list').append('<p class="text-muted">Задач нет.</p>');
@@ -73,7 +134,9 @@
                 <!-- Заголовок -->
                 <h6 class="mb-0 text-truncate text-transition task-title ${textDecoration}" style="max-width: 700px; cursor: pointer;">
                   📝 ${task.title}
-                  <span class="arrow ml-2" style="transition: 0.3s;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/></svg></span>
+                  <span class="arrow ml-2" style="transition: 0.3s;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/></svg>
+                    </span>
                 </h6>
               </div>
 
@@ -253,13 +316,14 @@
           files: $('#taskFiles')[0].files.length
             ? Array.from($('#taskFiles')[0].files).map(f => f.name)
             : [],
-          completed: false
+          completed: false,
+          synced: false,
+          _synced: false,
         };
         tasks.unshift(task);
         saveTasks();
         this.reset();
         renderTasks();
-        syncWithServer();
       });
     }
 
@@ -278,6 +342,8 @@
         task.link = $form.find('.edit-link').val();
         task.tag = $form.find('.edit-tag').val();
         task.coords = $form.find('.edit-coords').val();
+        task.synced = false;
+        task._synced = false;
         const filesInput = $form.find('.edit-files')[0];
         task.files = filesInput?.files.length
           ? Array.from(filesInput.files).map(f => f.name)
@@ -293,6 +359,9 @@
       renderTasks('all');
       bindEvents();
       setupForm();
+      setInterval(syncToServer, 180000);
+      // setInterval(syncToServer, 1000);
+      syncToServer(true);
     }
 
     init();

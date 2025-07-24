@@ -4,7 +4,7 @@ use CodeIgniter\Model;
 
 /**
  * Модель задач.
- * Отвечает за доступ к таблице `tasks`.
+ * Отвечает за доступ к таблице `task`.
  */
 class TaskModel extends Model
 {
@@ -13,7 +13,7 @@ class TaskModel extends Model
      *
      * @var string
      */
-    protected $table = 'tasks';
+    protected $table = 'task';
 
     /**
      * Первичный ключ таблицы.
@@ -28,15 +28,10 @@ class TaskModel extends Model
      * @var array
      */
     protected $allowedFields = [
-        'title',
-        'description',
-        'link',
-        'tag',
-        'coords',
-        'files',
-        'completed',
-        'created_at',
-        'updated_at'
+        'date_task',
+        'sync_id',
+        'obj',
+        'remember'
     ];
 
     /**

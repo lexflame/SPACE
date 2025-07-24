@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MakerTask</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- jQuery (обязательно перед Bootstrap) -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <!-- Popper.js -->
@@ -13,7 +11,8 @@
   <!-- Bootstrap JS -->
   <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="/assets/makerTask-responsive.css"/>
+  <link rel="stylesheet" href="/assets/css/makerTask-responsive.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="dark">
 
@@ -56,9 +55,9 @@
         <input type="text" class="form-control mr-2 mb-2" id="taskTitle" placeholder="Название" required>
         <input type="datetime-local" class="form-control mr-2 mb-2" id="taskDate" required>
         <select class="form-control mr-2 mb-2" id="taskPriority">
-          <option value="low">Низкий</option>
-          <option value="medium" selected>Средний</option>
           <option value="high">Высокий</option>
+          <option value="medium" selected>Средний</option>
+          <option value="low">Низкий</option>
         </select>
         <div class="form-row mb-2 disabled">
           <div class="col-md-6">
@@ -109,7 +108,7 @@
 
   <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="/assets/maker-task.plugin.js"></script>
+  <script src="/assets/js/maker-task.plugin.js"></script>
 <script>
   
   $(function() {
@@ -125,7 +124,7 @@
     });
   </script>
   <audio id="sound" preload="auto">
-   <source src="/assets/correctch.mp3" type="audio/mpeg">
+   <source src="/assets/media/correctch.mp3" type="audio/mpeg">
   </audio>
     <script>
       // Переход при клике по ссылке

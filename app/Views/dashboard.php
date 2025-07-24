@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sci-Fi Parallax</title>
+  <title>SPACE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -270,7 +270,7 @@
                     <div class="card h-100 text-center p-4">
                         <div class="card-body">
                             <svg class="icon-big" viewBox="0 0 16 16"><path d="M15.817.113A.5.5 0 0 1 16 .5v13.981a.5.5 0 0 1-.683.474l-4.53-1.78-5.573 1.792a.5.5 0 0 1-.348 0L.183 15.887A.5.5 0 0 1 0 15.5V1.519a.5.5 0 0 1 .683-.474l4.53 1.78 5.573-1.792a.5.5 0 0 1 .348 0l5.683 2.08zm-5.657 1.818-5 1.606v11.042l5-1.607V1.93zm1 .011v11.04l4 1.572V2.514l-4-1.573zM1 2.514v11.041l4 1.573V3.928L1 2.514z"/></svg>
-                            <h5 class="card-title">Карты</h5>
+                            <h5 class="card-title">TACMap</h5>
                             <p class="card-text text-secondary">Работайте с картами и маршрутами.</p>
                         </div>
                     </div>
@@ -290,11 +290,11 @@
             </div>
             <!-- Отладчик -->
             <div class="col-12 col-sm-6 col-lg-4">
-                <a href="<?= site_url('debugger') ?>" class="card-link" data-bubble="debugger">
+                <a href="interact" class="card-link" data-bubble="debugger">
                     <div class="card h-100 text-center p-4">
                         <div class="card-body">
                             <svg class="icon-big" viewBox="0 0 16 16"><path d="M3.204 11a1 1 0 1 1-1.414-1.415l7.071-7.07a1 1 0 0 1 1.415 1.415L3.204 11zm9.192-9.192a1 1 0 0 1 1.415 1.415L4.74 13.04a1 1 0 1 1-1.415-1.415zm0 0"/><path d="M6 13.5a1.5 1.5 0 1 1 3 0v1A1.5 1.5 0 0 1 6 14.5v-1zm4-3a1.5 1.5 0 1 1 3 0v1a1.5 1.5 0 0 1-3 0v-1z"/></svg>
-                            <h5 class="card-title">Отладчик</h5>
+                            <h5 class="card-title">InterAct</h5>
                             <p class="card-text text-secondary">Анализируйте и исправляйте ошибки.</p>
                         </div>
                     </div>
