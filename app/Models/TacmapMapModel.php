@@ -2,9 +2,9 @@
 
 use CodeIgniter\Model;
 
-class TacmapModel extends Model
+class TacmapMapModel extends Model
 {
-    protected $table = 'tacmap_markers';
+    protected $table = 'tacmap_map';
     protected $primaryKey = 'id';
     protected $allowedFields = ['label', 'x', 'y'];
 

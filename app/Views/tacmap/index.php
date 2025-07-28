@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TACMap</title>
+  <title>Карта: <?=$name?></title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/tacmap.css">
@@ -24,12 +24,17 @@
     #map-background {
       position: absolute;
       top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('https://i2.wp.com/images.wikia.com/reddeadredemption/images/archive/a/a3/20110625221743!Red-Dead-Redemption-Detailed-Game-Map.jpg'); /* карта из видеоигры */
+      width: <?=$dif[0]?>px;
+      height: <?=$dif[1]?>px;
+      background-image: url(<?=$path?>); /* карта из видеоигры */
       background-size: cover;
       background-position: center;
       z-index: 0;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: background-position 0.1s linear;
+      cursor: grab;
+      user-select: none;
     }
   </style>
 </head>
@@ -53,10 +58,26 @@
           opacity: 1;
           pointer-events: auto;
         }
+        #layers_of_marker {
+          display: block;
+          width: 100%;
+          height: 100vh;
+          position: relative;
+        }
+        .item_marker {
+          width: 5px;
+          height: 5px;
+          border-radius: 15px;
+          background-color: red;
+        }
     </style>
   <!-- Фон карты -->
-  <div id="map-wrapper">
-    <div id="map-background"></div>
+  <div id="map-wrapper" data-id="<?=$id?>">
+    <div id="map-background">
+      <div id="layers_of_marker">
+        
+      </div>
+    </div>
   </div>
 
   <!-- Верхняя панель -->
@@ -91,7 +112,7 @@
 
 
   <!-- Левый сайдбар -->
-  <div class="left-sidebar d-flex flex-column align-items-center p-2 text-center">
+  <div class="left-sidebar d-flex flex-column align-items-center p-2 text-center hidden-box">
     <div class="mb-3">
       <button class="btn btn-light d-flex flex-column align-items-center">
         <i class="fas fa-search"></i>
@@ -135,8 +156,18 @@
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/assets/js/tacmap.plugin.js"></script>
+  <script src="/assets/js/map-marker.plugin.js"></script>
+  <script>
+    $(function() {
+      $('#map-wrapper').markerMap({
+        apiUrl: '/tacmap',          // API CodeIgniter
+        storageKey: 'markerMap'
+      });
+    });
+  </script>
   <!-- инициализация tacMap -->
   <script>
     $(function() {
@@ -172,6 +203,48 @@
       window.addEventListener('beforeunload', () => {
         document.getElementById('page-fadeout').classList.add('show');
       });
+    </script>
+    <script>
+    $(function () {
+      let isMouseDown = false;
+      let $target = null;
+      let offset = { x: 0, y: 0 };
+
+      $('#map-background').on('mousedown', function (e) {
+        if (e.which !== 1) return; // Только левая кнопка
+
+        isMouseDown = true;
+        $target = $(this);
+        offset = $target.offset();
+        $target.css('cursor', 'grabbing');
+      });
+
+      $(document).on('mousemove', function (e) {
+        if (isMouseDown && $target) {
+          const relX = e.pageX - offset.left;
+          const relY = e.pageY - offset.top;
+          const elWidth = $target.outerWidth();
+          const elHeight = $target.outerHeight();
+
+          // Перевод в проценты
+          const posX = (relX / elWidth) * 1300;
+          const posY = (relY / elHeight) * 1300;
+
+          $target.css('transform', `translate(${posX}px, ${posY}px)`);
+        }
+      });
+
+      $(document).on('mouseup', function () {
+        if ($target) {
+          isMouseDown = false;
+          $target.css({
+            'cursor': 'grab',
+            // 'background-position': 'center' // Убери эту строку, если не хочешь возвращать
+          });
+          $target = null;
+        }
+      });
+    });
     </script>
 </body>
 </html>

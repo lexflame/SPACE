@@ -7,6 +7,9 @@ html, body {
   background-color: #000;
   font-family: 'Segoe UI', sans-serif;
 }
+.hidden-box {
+  display: none !important;
+}
 
 /*#map-background {
   position: absolute;
@@ -19,8 +22,8 @@ html, body {
 
 .top-bar {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 35px;
+  right: 15px;
   height: 56px;
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 14;
@@ -49,8 +52,8 @@ html, body {
 
 .right-toolbar {
   position: absolute;
-  top: 70px;
-  right: 10px;
+  top: 100px;
+  right: 32px;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 9px;
