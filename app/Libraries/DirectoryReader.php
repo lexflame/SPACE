@@ -69,8 +69,6 @@ class DirectoryReader
 
                 if (is_dir($fullPath)) {
 
-                    
-
                     $elm = [
                         'name' => $item,
                         'path' => $relativePath,
@@ -84,6 +82,7 @@ class DirectoryReader
 
                     $this->loadDB($elm);
                     $this->readDirectory($fullPath, $includeFiles, $relativePath, true);
+
                 } elseif ($includeFiles) {
                     
                     $explodePath = explode('/', $fullPath);
@@ -141,6 +140,7 @@ class DirectoryReader
                     if($this->debug === true) $this->result[] = $elm;
 
                     $this->loadDB($elm);
+                    
                 }
         }
     }

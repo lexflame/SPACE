@@ -24,9 +24,8 @@
     #map-background {
       position: absolute;
       top: 0; left: 0;
-      width: <?=$dif[0]?>px;
-      height: <?=$dif[1]?>px;
-      background-image: url(<?=$path?>); /* карта из видеоигры */
+      width: <?=$dif[1]?>px;
+      background-image: url(<?//=$path?>); /* карта из видеоигры */
       background-size: cover;
       background-position: center;
       z-index: 0;
@@ -35,48 +34,85 @@
       transition: background-position 0.1s linear;
       cursor: grab;
       user-select: none;
+      disp2lay: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #page-fadeout {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+    #page-fadeout.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #layers_of_marker {
+      display: block;
+      width: 100%;
+      height: 100vh;
+      position: relative;
+    }
+    .item_marker {
+      width: 5px;
+      height: 5px;
+      border-radius: 15px;
+      background-color: red;
+    }
+    .minute-grid {
+      display: none !important;
+    }
+    <? foreach ($src as $key => $item) { 
+      $width_flex_box = intval($item['img_src'][0])/12;
+      $height_flex_box = intval($item['img_src'][1])/12;
+      break;
+    } ?>
+    .layers_of_map_part {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, <?=$height_flex_box?>px);
+      gap: 0px;
+      wid1th: 80%;
+      max-wid1th: 800px;
+      width: <?=$dif[1]?>px;
+    }
+    .layers_of_map_part .flex_box {
+      background-color: #4CAF50; /* Цвет фона элементов */
+      border: 1px solid #ccc; /* Граница вокруг элемента */
+      display: flex;
+      justify-content: center; /* Центрирование содержимого по горизонтали */
+      align-items: center; /* Центрирование содержимого по вертикали */
+      color: white; /* Цвет текста */
+      font-size: 24px; /* Размер шрифта */
+      background-color: #fff;
+      border: 1px solid #000;
+      width: <?=$width_flex_box?>px;
+      height: <?=$height_flex_box?>px;
     }
   </style>
 </head>
 <body>
-
-    <div id="page-fadeout"></div>
-    <style>
-        #page-fadeout {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: #000;
-          opacity: 0;
-          pointer-events: none;
-          z-index: 9999;
-          transition: opacity 0.6s ease;
-        }
-        #page-fadeout.show {
-          opacity: 1;
-          pointer-events: auto;
-        }
-        #layers_of_marker {
-          display: block;
-          width: 100%;
-          height: 100vh;
-          position: relative;
-        }
-        .item_marker {
-          width: 5px;
-          height: 5px;
-          border-radius: 15px;
-          background-color: red;
-        }
-        .minute-grid {
-          display: none !important;
-        }
-    </style>
+  <div id="page-fadeout"></div>
   <!-- Фон карты -->
   <div id="map-wrapper" data-id="<?=$id?>">
     <div id="map-background">
+      <div class="layers_of_map_part">
+        <? foreach ($src as $key => $item) { ?>
+            <div 
+              class='flex_box' 
+              style="background-image: url(<?//=$item['img_src']['url'];?>);"
+              >
+            </div>
+        <? } ?>
+      </div>
       <div id="layers_of_marker">
         
       </div>
@@ -188,7 +224,7 @@
   </script>
   <script>
     $(document).on('contextmenu', function(e) {
-      e.preventDefault();
+      // e.preventDefault();
     });  
   </script>
     <script>

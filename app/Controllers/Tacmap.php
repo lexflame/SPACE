@@ -25,14 +25,16 @@ class Tacmap extends BaseController
         foreach ($query->getResult() as $key => $value) {
             $arrImg[$key+1] = (array) $value; 
         }
+
         foreach ($arrImg as $key => $item) {
-            // $arrImg[$key]['dif'] = getimagesize($item['full_path']);
-            // $value['dif'] = getimagesize('http://'.$_SERVER['HTTP_HOST'].'yadnexdisk'.$arrMap['path']);
+            $url_src = 'http://'.$_SERVER['HTTP_HOST'].'/yandexdisk/Gallery/'.str_replace(' ', '%20', $item['path']);
+            $arrImg[$key]['img_src'] = getimagesize($url_src);
+            $arrImg[$key]['img_src']['url'] = $url_src;
         }
         $arrMap['src'] = $arrImg;
         $arrMap['dif'] = getimagesize('http://'.$_SERVER['HTTP_HOST'].$arrMap['path']);
-         echo '<pre>'; print_r($arrMap); echo '</pre>'; exit;
-        // return view('tacmap/index', $arrMap);
+        // echo '<pre>'; print_r($arrMap); echo '</pre>'; exit;
+        return view('tacmap/index', $arrMap);
     }
     public function dev($id = 1)
     {   
