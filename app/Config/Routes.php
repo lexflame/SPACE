@@ -28,6 +28,7 @@ $routes->delete('/tasks/delete/(:num)', 'TaskController::delete/$1');
 // $routes->get('/tasks/view/(:num)', 'TaskController::view/$1'); -  отдельная задача
 
 $routes->get('tacmap',      'Tacmap::index');
+$routes->get('dev',         'Tacmap::dev');
 $routes->get('tacmap/data', 'Tacmap::data');
 
 /**
@@ -40,6 +41,7 @@ $routes->get   ('/load/(:num)/(:num)',   'Inter::wpage');
 $routes->get   ('/Container/edo/',       'Inter::EdoBlock');
 
 $routes->get   ('/disk_data',             'Disk::index');
+$routes->cli   ('sync_data',              'Disk::index');
 
 $routes->group('files', function($routes) {
     $routes->get('/', 'FileController::index');

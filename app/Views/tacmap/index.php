@@ -70,6 +70,9 @@
           border-radius: 15px;
           background-color: red;
         }
+        .minute-grid {
+          display: none !important;
+        }
     </style>
   <!-- Фон карты -->
   <div id="map-wrapper" data-id="<?=$id?>">
