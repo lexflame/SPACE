@@ -70,6 +70,7 @@
       left: 0px;
       width: <?=$widthMapWrapper?>px;
       height: <?=$heightMapWrapper?>px;
+      pointer-events: none;
     }
     .item_marker {
       width: 20px;
@@ -96,6 +97,9 @@
     .layers_of_map_part .flex_box {
       background-repeat: no-repeat;
       background-size: cover;
+      background-color: #cccccc63;
+      background-image: url(/assets/media/thumb_time.png);
+      transition: background-image 3s ease;
       display: flex;
       justify-content: center; /* Центрирование содержимого по горизонтали */
       align-items: center; /* Центрирование содержимого по вертикали */
@@ -120,7 +124,12 @@
     <div id="map-background">
       <div class="layers_of_map_part">
         <? foreach ($src as $key => $item) { ?>
-            <div class='flex_box' data-key="<?=$key?>" style="background-image: url(<?=$item['img_src']['pathToThumb'];?>);"></div>
+            <div 
+              class='flex_box' 
+              data-key="<?=$key?>" 
+              data-src="<?=$item['img_src']['pathToThumb'];?>"
+            >
+            </div>
         <? } ?>
       </div>
       <div id="layers_of_marker"></div>
@@ -214,10 +223,40 @@
   <script src="/assets/js/tacmap.plugin.js"></script>
   <script src="/assets/js/map-marker.plugin.js"></script>
   <script src="/assets/js/map-nav.plugin.js"></script>
+  <script src="/assets/js/minute-frame.plugin.js"></script>
+    <script>
+      $('.flex_box').on('mouseenter', function (e) {
+        
+        var obj = $('#map-background');
+        var transformMatrix = obj.css("transform");
+        var matrix = transformMatrix.replace(/[^0-9\-.,]/g, '').split(',');
+
+        if(parseInt(matrix[0]) > 0){
+          $(this).css("background-image", "url('" + $(this).data('src').replace('thumb_','') + "')");
+        }
+
+      });
+      $('.layers_of_map_part').on('mousemove', function(event) {
+          $('#layers_of_marker').mousemove()
+      });
+      $('.layers_of_map_part').on('dblclick', function(event) {
+          $('#layers_of_marker').dblclick()
+      });
+    </script>
   <script>
-  $( function() {
-    $( "#map-background" ).draggable({ containment: "#map-wrapper", scroll: false });
-  } );
+    // Image for transition
+    $('.layers_of_map_part').find('.flex_box').each(function( indx,box ){
+      var image = new Image();
+      image.src = $(box).data('src');
+      image.onload = function () {
+        $(box).css("background-image", "url('" + image.src + "')");
+      };
+    });
+  </script>
+  <script>
+    $( function() {
+      $( "#map-background" ).draggable({ containment: "#map-wrapper", scroll: false });
+    } );
   </script>
   <script>
     $(function() {
@@ -234,7 +273,6 @@
       $(this).MapNav('setWrapper') 
     });
   </script>
-  <script src="/assets/js/minute-frame.plugin.js"></script>
   <!-- инициализация minuteGrid -->
   <script>
     $('#map-background').minuteGrid({
@@ -278,11 +316,6 @@
         offset = $target.offset();
         $target.css('cursor', 'grabbing');
       });
-
-      $('.flex_box').on('mouseover', function (e) {
-        // console.log($(this).data('key'))
-      });
-
       $(document).on('mouseup', function () {
         if ($target) {
           isMouseDown = false;

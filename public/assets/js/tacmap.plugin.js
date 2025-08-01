@@ -95,7 +95,7 @@
       translate.x = translate.x - (offsetX * (ratio - 1));
       translate.y = translate.y - (offsetY * (ratio - 1));
       scale = newScale;
-      console.log(scale)
+      // console.log(scale)
 
       $(this).MapNav('fixGrid',translate.x,translate.y,scale,'mousewheel')
 

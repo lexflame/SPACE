@@ -49,17 +49,12 @@ class Tacmap extends BaseController
                 if($value_cat === 'public'){unset($explThumb[$key_cat]);}
             }
 
-            if(!file_exists($arrImg[$key]['img_src']['pathToThumb'])){
-                $arrImg[$key]['img_src']['resThumb'] = boolval(
-                    $image->withFile($pathToSrc)
-                    ->resize(718.16, 718.91, true, 'box')
-                    ->save($arrImg[$key]['img_src']['pathToThumb'])
-                );
-            }else{
+            if(file_exists($arrImg[$key]['img_src']['pathToThumb'])){
                 $arrImg[$key]['img_src']['resThumb'] = true;
             }
 
             $arrImg[$key]['img_src']['pathToThumb'] = str_replace(' ','%20','http://'.$_SERVER['HTTP_HOST'].implode('/', $explThumb));
+            
             $arrMap['width_flex_box'] = intval($arrImg[$key]['img_src'][0])/12;
             $arrMap['height_flex_box'] = intval($arrImg[$key]['img_src'][1])/12;
             $arrMap['widthMapWrapper'] = ($arrMap['width_flex_box'] * $arrMap['flex_count']);
@@ -69,9 +64,18 @@ class Tacmap extends BaseController
             $arrMap['startMapPosTop'] = 0;
             $arrMap['startMapPosLeft'] = $arrMap['height_flex_box'];
         }
-        $arrMap['src']          = $arrImg;
+
+        $arrSortNameImg = [];
+        foreach($arrImg as $key_db => $img_data){
+            $key = intval(explode('_',$img_data['name'])[0]);
+            $arrSortNameImg[$key] = $img_data;
+        }
+
+        ksort($arrSortNameImg);
+        $arrMap['src']          = $arrSortNameImg;
         $arrMap['dif']          = getimagesize('http://'.$_SERVER['HTTP_HOST'].$arrMap['path']);
         $arrMap['dif']['url']   = 'http://'.$_SERVER['HTTP_HOST'].$arrMap['path'];
+
         // echo '<pre>'; print_r($arrMap); echo '</pre>'; exit;
         return view('tacmap/index', $arrMap);
     }

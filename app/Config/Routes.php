@@ -42,6 +42,7 @@ $routes->get   ('/Container/edo/',       'Inter::EdoBlock');
 
 $routes->get   ('/disk_data',             'Disk::index');
 $routes->cli   ('sync_data',              'Disk::index');
+$routes->cli   ('thumd_tacmap',           'Disk::thumd_tacmap');
 
 $routes->group('files', function($routes) {
     $routes->get('/', 'FileController::index');
