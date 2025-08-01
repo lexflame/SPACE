@@ -57,17 +57,29 @@
       opacity: 1;
       pointer-events: auto;
     }
+    .opacity_temp {
+      opacity: 0;
+      transition: background-position 0.1s linear;
+    }
     #layers_of_marker {
       display: block;
       width: 100%;
       height: 100vh;
-      position: relative;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: <?=$widthMapWrapper?>px;
+      height: <?=$heightMapWrapper?>px;
     }
     .item_marker {
-      width: 5px;
-      height: 5px;
+      width: 20px;
+      height: 20px;
       border-radius: 15px;
       background-color: red;
+      transition: background-position 0.1s linear;
+      background: radial-gradient(circle, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
+      box-shadow: blue;
+      box-shadow: 2px 0px 14px 16px rgba(34, 60, 80, 0.45);
     }
     .minute-grid {
       /*display: none !important;*/
@@ -268,39 +280,7 @@
       });
 
       $('.flex_box').on('mouseover', function (e) {
-        console.log($(this).data('key'))
-      });
-      $(document).on('mousemove', function (e) {
-        // if (isMouseDown && $target) {
-
-        //   var transformMatrix = $target.css("transform");
-        //   var matrix = transformMatrix.replace(/[^0-9\-.,]/g, '').split(',');
-        //   var curx = matrix[12] || matrix[4];
-        //   var cury = matrix[13] || matrix[5];
-        //   if(typeof(curx) == 'undefined'){curx = 0;}
-        //   if(typeof(cury) == 'undefined'){cury = 0;}
-
-        //   const relX = e.pageX - offset.left;
-        //   const relY = e.pageY - offset.top;
-        //   const elWidth = $target.outerWidth();
-        //   const elHeight = $target.outerHeight();
-
-        //   // Перевод в проценты
-        //   const posX = (relX / elWidth) * 100;
-        //   const posY = (relY / elHeight) * 100;
-
-        //   var minor = 1.3;
-        //   setX = e.pageX+curx;
-        //   setY = e.pageY+cury;
-
-          
-        //   // if(relY < 600 && posX < 800){
-        //   //   console.log('exist_border')
-        //   // }else{
-        //     $(this).MapNav('fixGrid',setX,setY,false,'mousemove')  
-             // $target.css('transform', `translate(${setX}px, ${setY}px)`);
-        //   // }
-        // }
+        // console.log($(this).data('key'))
       });
 
       $(document).on('mouseup', function () {

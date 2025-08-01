@@ -11,7 +11,7 @@
     let translate = { x: 0, y: 0 };
     let dragging = false;
     let dragStart = { x: 0, y: 0 };
-    const maxScale = 3;
+    const maxScale = 8;
     const minScale = 1;
 
     const $map = $('#map-background');
@@ -74,6 +74,7 @@
 
     $('#zoom-out').on('click', function () {
       scale = clamp(scale - 0.1, minScale, maxScale);
+      console.log(minScale);
       updateTransform();
     });
 
@@ -94,6 +95,7 @@
       translate.x = translate.x - (offsetX * (ratio - 1));
       translate.y = translate.y - (offsetY * (ratio - 1));
       scale = newScale;
+      console.log(scale)
 
       $(this).MapNav('fixGrid',translate.x,translate.y,scale,'mousewheel')
 

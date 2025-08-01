@@ -22,8 +22,11 @@
       new_marker.style.position = "absolute";
       new_marker.style.left = x+'px';
       new_marker.style.top = y+'px';
+      new_marker.style.opacity = 0;
       new_marker.classList.add('item_marker');
+      $(new_marker).fadeTo({'opacity':'1'},0);
       $marker_lr.prepend(new_marker);
+      $(new_marker).fadeTo({'opacity':'1'},2000);
     }
 
     function init() {
@@ -36,8 +39,8 @@
         const rects = this.getClientRects();
         if (rects.length > 0) {
           rect = rects[0];
-          x = event.clientX - rect.left;
-          y = event.clientY - rect.top;
+          x = event.clientX - rect.left-20;
+          y = event.clientY - rect.top-20;
         }
       });
     });

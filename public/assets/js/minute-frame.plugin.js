@@ -16,8 +16,8 @@
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: $('#map-wrapper').width()+'px',
+        height: $('#map-wrapper').height()+'px',
         pointerEvents: 'none',
         zIndex: this.settings.zIndex
       });
@@ -30,8 +30,8 @@
 
     renderGrid() {
       const { stepPx, showLabels, color, labelColor, scale } = this.settings;
-      const width = this.$map.width() * scale;
-      const height = this.$map.height() * scale;
+      const width = $('#map-wrapper').width() * scale;
+      const height = $('#map-wrapper').height() * scale;
       const step = stepPx * scale;
 
       this.$grid.empty();
