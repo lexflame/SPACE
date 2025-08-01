@@ -79,7 +79,7 @@
 
     // Масштабирование колесом под курсором
     $(wrapper).on('mousewheel', function (e) {
-      // console.log(e)
+      
       e.preventDefault();
       
       const delta = e.originalEvent.deltaY < 0 ? 0.1 : -0.1;
@@ -94,6 +94,9 @@
       translate.x = translate.x - (offsetX * (ratio - 1));
       translate.y = translate.y - (offsetY * (ratio - 1));
       scale = newScale;
+
+      $(this).MapNav('fixGrid',translate.x,translate.y,scale,'mousewheel')
+
       updateTransform();
     });
 

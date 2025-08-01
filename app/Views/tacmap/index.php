@@ -23,7 +23,7 @@
     }
     #map-background {
       position: absolute;
-      top: 0; left: 0;
+      /*top: 0; left: 0;*/
       width: <?=$dif[1]?>px;
       background-image: url(<?//=$path?>); /* карта из видеоигры */
       background-size: cover;
@@ -38,6 +38,8 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      top: <?=$posTopMapWrapper?>px;
+      left: <?=$startMapPosLeft?>px;
     }
     #page-fadeout {
       position: fixed;
@@ -68,58 +70,58 @@
       background-color: red;
     }
     .minute-grid {
-      display: none !important;
+      /*display: none !important;*/
     }
-    <? foreach ($src as $key => $item) { 
-      $width_flex_box = intval($item['img_src'][0])/12;
-      $height_flex_box = intval($item['img_src'][1])/12;
-      break;
-    } ?>
     .layers_of_map_part {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, <?=$height_flex_box?>px);
-      gap: 0px;
+      grid-template-columns: repeat(<?=$flex_count?>, 1fr);
+      grid-template-rows: repeat(<?=$flex_count?>, <?=$height_flex_box?>px);
+      gap: -1px;
       wid1th: 80%;
       max-wid1th: 800px;
       width: <?=$dif[1]?>px;
     }
     .layers_of_map_part .flex_box {
-      background-color: #4CAF50; /* Цвет фона элементов */
-      border: 1px solid #ccc; /* Граница вокруг элемента */
+      background-repeat: no-repeat;
+      background-size: cover;
       display: flex;
       justify-content: center; /* Центрирование содержимого по горизонтали */
       align-items: center; /* Центрирование содержимого по вертикали */
       color: white; /* Цвет текста */
       font-size: 24px; /* Размер шрифта */
-      background-color: #fff;
-      border: 1px solid #000;
       width: <?=$width_flex_box?>px;
       height: <?=$height_flex_box?>px;
     }
+    #map-wrapper 
+    {
+      width: <?=$widthMapWrapper?>px;
+      height: <?=$heightMapWrapper?>px;
+      top: -<?=$posTopMapWrapper?>px;
+      left: -<?=$posLeftMapWrapper?>px;
+    }
   </style>
 </head>
-<body>
+<body style="transf3orm: scale(0.1);">
   <div id="page-fadeout"></div>
   <!-- Фон карты -->
-  <div id="map-wrapper" data-id="<?=$id?>">
+  <div id="map-wrapper" data-id="<?=$id?>" style="bo2rder: 1px solid #fff;">
     <div id="map-background">
       <div class="layers_of_map_part">
         <? foreach ($src as $key => $item) { ?>
-            <div 
-              class='flex_box' 
-              style="background-image: url(<?//=$item['img_src']['url'];?>);"
-              >
-            </div>
+            <div class='flex_box' data-key="<?=$key?>" style="background-image: url(<?=$item['img_src']['pathToThumb'];?>);"></div>
         <? } ?>
       </div>
-      <div id="layers_of_marker">
-        
-      </div>
+      <div id="layers_of_marker"></div>
     </div>
   </div>
 
   <!-- Верхняя панель -->
+  <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4 hidden-box" style="top: 103px;width: 35%;right: 104px;color: #fff;">
+    <div id="posx"></div>
+    <div id="posy"></div>
+    <div id="scale_pos"></div>
+    <div id="event_pos"></div>
+  </div>
   <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4">
     <div class="d-flex align-items-center">
       <button class="btn btn-outline-light mr-2"><i class="fas fa-cube"></i> Маркеры</button>
@@ -195,10 +197,16 @@
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script> -->
+  <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/assets/js/tacmap.plugin.js"></script>
   <script src="/assets/js/map-marker.plugin.js"></script>
+  <script src="/assets/js/map-nav.plugin.js"></script>
+  <script>
+  $( function() {
+    $( "#map-background" ).draggable({ containment: "#map-wrapper", scroll: false });
+  } );
+  </script>
   <script>
     $(function() {
       $('#map-wrapper').markerMap({
@@ -211,6 +219,7 @@
   <script>
     $(function() {
       $(document).tacMap(); 
+      $(this).MapNav('setWrapper') 
     });
   </script>
   <script src="/assets/js/minute-frame.plugin.js"></script>
@@ -258,19 +267,40 @@
         $target.css('cursor', 'grabbing');
       });
 
+      $('.flex_box').on('mouseover', function (e) {
+        console.log($(this).data('key'))
+      });
       $(document).on('mousemove', function (e) {
-        if (isMouseDown && $target) {
-          const relX = e.pageX - offset.left;
-          const relY = e.pageY - offset.top;
-          const elWidth = $target.outerWidth();
-          const elHeight = $target.outerHeight();
+        // if (isMouseDown && $target) {
 
-          // Перевод в проценты
-          const posX = (relX / elWidth) * 1300;
-          const posY = (relY / elHeight) * 1300;
+        //   var transformMatrix = $target.css("transform");
+        //   var matrix = transformMatrix.replace(/[^0-9\-.,]/g, '').split(',');
+        //   var curx = matrix[12] || matrix[4];
+        //   var cury = matrix[13] || matrix[5];
+        //   if(typeof(curx) == 'undefined'){curx = 0;}
+        //   if(typeof(cury) == 'undefined'){cury = 0;}
 
-          $target.css('transform', `translate(${posX}px, ${posY}px)`);
-        }
+        //   const relX = e.pageX - offset.left;
+        //   const relY = e.pageY - offset.top;
+        //   const elWidth = $target.outerWidth();
+        //   const elHeight = $target.outerHeight();
+
+        //   // Перевод в проценты
+        //   const posX = (relX / elWidth) * 100;
+        //   const posY = (relY / elHeight) * 100;
+
+        //   var minor = 1.3;
+        //   setX = e.pageX+curx;
+        //   setY = e.pageY+cury;
+
+          
+        //   // if(relY < 600 && posX < 800){
+        //   //   console.log('exist_border')
+        //   // }else{
+        //     $(this).MapNav('fixGrid',setX,setY,false,'mousemove')  
+             // $target.css('transform', `translate(${setX}px, ${setY}px)`);
+        //   // }
+        // }
       });
 
       $(document).on('mouseup', function () {
