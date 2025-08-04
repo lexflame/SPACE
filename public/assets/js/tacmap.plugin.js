@@ -63,7 +63,7 @@
       } else {
         $map.css('transition', 'none');
       }
-      clampTranslate();
+      clampTranslate();      
       $map.css('transform', `translate(${translate.x}px, ${translate.y}px) scale(${scale})`);
     }
 

@@ -58,6 +58,12 @@
             padding: '1px 3px',
             borderRadius: '3px'
           }));
+          var yPosRuler = y + 10;
+          $('.vertical_ruler').find('.line_marker').append($('<div class="minute-label"></div>').text(`${Math.round(y / step)}′`).css({
+            position: 'absolute',
+            top: yPosRuler + 'px',
+            left: 0,
+        }))
         }
       }
 
@@ -83,6 +89,12 @@
             padding: '1px 3px',
             borderRadius: '3px'
           }));
+          var xPosRuler = x + 10;
+          $('.horizontal_ruler').find('.line_marker').append($('<div class="minute-label"></div>').text(`${Math.round(x / step)}′`).css({
+            position: 'absolute',
+            top: 0,
+            left: xPosRuler + 'px',
+        }))
         }
       }
     }

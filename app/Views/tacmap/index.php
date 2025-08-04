@@ -9,103 +9,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="/assets/css/tacmap.css">
   <style>
-    .left-sidebar .btn {
-      width: 56px;
-      padding: 0.5rem 0;
-    }
-    .left-sidebar .btn small {
-      font-size: 11px;
-      line-height: 1.2;
-      margin-top: 4px;
-    }
-    .left-sidebar i {
-      font-size: 20px;
-    }
     #map-background {
-      position: absolute;
-      /*top: 0; left: 0;*/
       width: <?=$dif[1]?>px;
-      background-image: url(<?//=$path?>); /* карта из видеоигры */
-      background-size: cover;
-      background-position: center;
-      z-index: 0;
-      background-repeat: no-repeat;
-      background-position: center;
-      transition: background-position 0.1s linear;
-      cursor: grab;
-      user-select: none;
-      disp2lay: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       top: <?=$posTopMapWrapper?>px;
       left: <?=$startMapPosLeft?>px;
     }
-    #page-fadeout {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transition: opacity 0.6s ease;
-    }
-    #page-fadeout.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .opacity_temp {
-      opacity: 0;
-      transition: background-position 0.1s linear;
-    }
     #layers_of_marker {
-      display: block;
-      width: 100%;
-      height: 100vh;
-      position: absolute;
-      top: 0px;
-      left: 0px;
       width: <?=$widthMapWrapper?>px;
       height: <?=$heightMapWrapper?>px;
-      pointer-events: none;
-      z-index: 100;
-    }
-    .item_marker {
-      width: 20px;
-      height: 20px;
-      border-radius: 15px;
-      background-color: red;
-      transition: background-position 0.1s linear;
-      background: radial-gradient(circle, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
-      box-shadow: blue;
-      box-shadow: 2px 0px 14px 16px rgba(34, 60, 80, 0.45);
-    }
-    .minute-grid {
-      /*display: none !important;*/
     }
     .layers_of_map_part {
-      display: grid;
       grid-template-columns: repeat(<?=$flex_count?>, 1fr);
       grid-template-rows: repeat(<?=$flex_count?>, <?=$height_flex_box?>px);
-      gap: -1px;
-      wid1th: 80%;
-      max-wid1th: 800px;
       width: <?=$dif[1]?>px;
     }
     .layers_of_map_part .flex_box {
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-color: #cccccc63;
-      background-image: url(/assets/media/thumb_time.png);
-      transition: background-image 3s ease;
-      display: flex;
-      justify-content: center; /* Центрирование содержимого по горизонтали */
-      align-items: center; /* Центрирование содержимого по вертикали */
-      color: white; /* Цвет текста */
-      font-size: 24px; /* Размер шрифта */
       width: <?=$width_flex_box?>px;
       height: <?=$height_flex_box?>px;
     }
@@ -116,12 +34,31 @@
       top: -<?=$posTopMapWrapper?>px;
       left: -<?=$posLeftMapWrapper?>px;
     }
+    .horizontal_ruler {
+      width: <?=$widthMapWrapper?>px;
+    }
+    .vertical_ruler {
+      height: <?=$heightMapWrapper?>px;
+    }
+    .horizontal_ruler .line_marker {
+      left: -<?=$posLeftMapWrapper - 480?>px;
+    }
+    .vertical_ruler .line_marker {
+      top: -<?=$posTopMapWrapper - 480?>px;
+    }
   </style>
 </head>
-<body style="transf3orm: scale(0.1);">
+<body>
   <div id="page-fadeout"></div>
   <!-- Фон карты -->
-  <div id="map-wrapper" data-id="<?=$id?>" style="bo2rder: 1px solid #fff;">
+  <div class="topBox"></div>
+  <div class="horizontal_ruler">
+    <div class="line_marker"></div>
+  </div>
+  <div class="vertical_ruler">
+    <div class="line_marker"></div>
+  </div>
+  <div id="map-wrapper" data-id="<?=$id?>">
     <div id="map-background">
       <div class="layers_of_map_part" id="layers_of_map_part">
         <? foreach ($src as $key => $item) { ?>
@@ -225,25 +162,26 @@
   <script src="/assets/js/map-marker.plugin.js"></script>
   <script src="/assets/js/map-nav.plugin.js"></script>
   <script src="/assets/js/minute-frame.plugin.js"></script>
-    <script>
-      $('.flex_box').on('mouseenter', function (e) {
-        
-        var obj = $('#map-background');
-        var transformMatrix = obj.css("transform");
-        var matrix = transformMatrix.replace(/[^0-9\-.,]/g, '').split(',');
+  <script>
+    $('.flex_box').on('mouseenter', function (e) {
+      
+      var obj = $('#map-background');
+      var transformMatrix = obj.css("transform");
+      var matrix = transformMatrix.replace(/[^0-9\-.,]/g, '').split(',');
 
-        if(parseInt(matrix[0]) > 0){
-          $(this).css("background-image", "url('" + $(this).data('src').replace('thumb_','') + "')");
-        }
+      if(parseInt(matrix[0]) > 0){
+        $(this).css("background-image", "url('" + $(this).data('src').replace('thumb_','') + "')");
+      }
 
-      });
-      $('.layers_of_map_part').on('mousemove', function(event) {
-          $('#layers_of_marker').mousemove()
-      });
-      $('.layers_of_map_part').on('dblclick', function(event) {
-          $('#layers_of_marker').dblclick()
-      });
-    </script>
+    });
+    $('.layers_of_map_part').on('mousemove', function(event) {
+        if(this.altKey === undefined) {return}
+        $('#layers_of_marker').mousemove()
+    });
+    $('.layers_of_map_part').on('dblclick', function(event) {
+        $('#layers_of_marker').dblclick()
+    });
+  </script>
   <script>
     // Image for transition
     $('#map-background').fadeOut();
@@ -258,8 +196,18 @@
   </script>
   <script>
     $( function() {
-      $( "#map-background" ).draggable({ containment: "#map-wrapper", scroll: false });
-    } );
+      var draggable = $( "#map-background" ).draggable(
+          { 
+            containment: "#map-wrapper", 
+            scroll: false,
+            drag: function() {
+             var horizontal_ruler_pos = parseInt($(this).css("left"))-980;
+             var vertical_ruler_pos = parseInt($(this).css("top"))-1900;
+             $('.horizontal_ruler').find('.line_marker').css('left',''+horizontal_ruler_pos+'px')
+             $('.vertical_ruler').find('.line_marker').css('top',''+vertical_ruler_pos+'px')
+            },
+          });
+      });
   </script>
   <script>
     $(function() {
@@ -289,35 +237,37 @@
       // e.preventDefault();
     });  
   </script>
-    <script>
-      // Переход при клике по ссылке
-      $(document).on('click', 'a[href]:not([target="_blank"]):not([href^="#"])', function(e) {
-        e.preventDefault();
-        const href = $(this).attr('href');
-        $('#page-fadeout').addClass('show');
-        setTimeout(() => {
-          window.location.href = href;
-        }, 600);
-      });
+  <script>
+    // Переход при клике по ссылке
+    $(document).on('click', 'a[href]:not([target="_blank"]):not([href^="#"])', function(e) {
+      e.preventDefault();
+      const href = $(this).attr('href');
+      $('#page-fadeout').addClass('show');
+      setTimeout(() => {
+        window.location.href = href;
+      }, 600);
+    });
 
-      // Переход при обновлении/перезагрузке
-      window.addEventListener('beforeunload', () => {
-        document.getElementById('page-fadeout').classList.add('show');
-      });
-    </script>
-    <script>
+    // Переход при обновлении/перезагрузке
+    window.addEventListener('beforeunload', () => {
+      document.getElementById('page-fadeout').classList.add('show');
+    });
+  </script>
+  <script>
     $(function () {
       let isMouseDown = false;
       let $target = null;
       let offset = { x: 0, y: 0 };
 
       $('#map-background').on('mousedown', function (e) {
+
         if (e.which !== 1) return; // Только левая кнопка
 
         isMouseDown = true;
         $target = $(this);
         offset = $target.offset();
         $target.css('cursor', 'grabbing');
+
       });
       $(document).on('mouseup', function () {
         if ($target) {
@@ -330,6 +280,6 @@
         }
       });
     });
-    </script>
+  </script>
 </body>
 </html>
