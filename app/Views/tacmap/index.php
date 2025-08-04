@@ -71,6 +71,7 @@
       width: <?=$widthMapWrapper?>px;
       height: <?=$heightMapWrapper?>px;
       pointer-events: none;
+      z-index: 100;
     }
     .item_marker {
       width: 20px;
@@ -122,7 +123,7 @@
   <!-- Фон карты -->
   <div id="map-wrapper" data-id="<?=$id?>" style="bo2rder: 1px solid #fff;">
     <div id="map-background">
-      <div class="layers_of_map_part">
+      <div class="layers_of_map_part" id="layers_of_map_part">
         <? foreach ($src as $key => $item) { ?>
             <div 
               class='flex_box' 
@@ -245,6 +246,7 @@
     </script>
   <script>
     // Image for transition
+    $('#map-background').fadeOut();
     $('.layers_of_map_part').find('.flex_box').each(function( indx,box ){
       var image = new Image();
       image.src = $(box).data('src');
@@ -252,6 +254,7 @@
         $(box).css("background-image", "url('" + image.src + "')");
       };
     });
+    $('#map-background').fadeIn();
   </script>
   <script>
     $( function() {
