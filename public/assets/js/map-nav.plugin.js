@@ -4,6 +4,11 @@
     init : function( options ) { 
       // А ВОТ ЭТОТ
     },
+    markerMap : function( obj ) {
+      return $(this).markerMap({
+        storageKey: 'storage_markerMap'
+      })
+    },
     setWrapper : function( options ) { 
       var winWidth = $( 'body' ).width();
       var winHeight = $( 'body' ).height();

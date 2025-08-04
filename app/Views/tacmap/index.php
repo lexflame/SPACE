@@ -174,10 +174,19 @@
       }
 
     });
-    $('.layers_of_map_part').on('mousemove', function(event) {
-        if(this.altKey === undefined) {return}
-        $('#layers_of_marker').mousemove()
-    });
+    // var pos = [];
+    // $('#map-background').on('mousemove', function(event) {
+    //   const layersDiv = document.getElementById('layers_of_map_part');
+    //   layersDiv.addEventListener('mousemove', function(event) {
+    //     const rects = this.getClientRects();
+    //     if (rects.length > 0) {
+    //       pos.rect = rects[0];
+    //       pos.x = event.clientX - rect.left-20;
+    //       pos.y = event.clientY - rect.top-20;
+    //       console.log(pos)
+    //     }
+    //   });
+    // });
     $('.layers_of_map_part').on('dblclick', function(event) {
         $('#layers_of_marker').dblclick()
     });
@@ -215,6 +224,12 @@
         apiUrl: '/tacmap',          // API CodeIgniter
         storageKey: 'markerMap'
       });
+    });
+    $('#layers_of_map_part').on('mousemove', function(event_prt) {
+      $(this).markerMap('mousemove',event_prt)
+    });
+    $('#layers_of_marker').on('dblclick', function(event) {
+      $(this).markerMap('newMarker',event);
     });
   </script>
   <!-- инициализация tacMap -->
