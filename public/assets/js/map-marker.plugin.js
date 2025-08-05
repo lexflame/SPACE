@@ -45,12 +45,11 @@
     },
 
     isLock: function(){
-      lock_attr = $(marker_lr).attr('data-lock')
-      return (typeof(lock_attr) != 'undefined' || lock_attr === '0')?true:false;
+      lock_attr = parseInt($(marker_lr).attr('data-lock')) 
+      return (lock_attr === 0)?false:true;
     },
 
     newMarker: function( event ){
-      console.log($(this).markerMap('isLock'))
       if($(this).markerMap('isLock') === false && x > 0 && y > 0){
         const new_marker = document.createElement("div");
         new_marker.style.position = "absolute";
@@ -78,7 +77,7 @@
       const input = document.createElement("input");
       input.setAttribute('type','text')
       input.setAttribute('class','name_new_marker')
-      input.setAttribute('onblur','$(this).markerMap("fucusOutMark")')
+      // input.setAttribute('onblur','$(this).markerMap("fucusOutMark")')
       input.setAttribute('name','name_new_marker')
       input.setAttribute('id','name_new_marker')
 
@@ -102,13 +101,67 @@
     },
 
     fucusOutMark: function ( mark ){
-      // console.log(this)
-      if(confirm('Сохранить метку?')){
+      var obj = this;
+      $.confirm({
+          title: 'Внимание!',
+          theme: 'supervan',
+          animation: 'zoom',
+          closeAnimation: 'scale',
+          animationBounce: 1.5,
+          animationSpeed: 2000,
+          content: 'Сохранить маркер?',
+          buttons: {
+              Да: function () {
+                  var save = $(obj).markerMap('saveMerker')
+                  if(save.result === true){
+                    $.alert('Сохранён');
+                  }else{
+                    $.alert({
+                        theme: 'dark',
+                        title: 'Внимание!',
+                        content: save.text,
+                    });
+                    $(obj).addClass('error')
+                  }
+              },
+              Нет: function () {
+                  $(obj).parent('#new_marker').parent('.item_marker').remove();
+                  $(obj).markerMap('unLock');
+                  $.alert('Маркер будет удален');
+              },
+          }
+      });
+    },
 
-      }else{
-        this.parent('#new_marker').parent('.item_marker').remove()
-        $(this).markerMap('unLock')
+    saveMerker: function ()
+    {
+      var res = [];
+      res.result = false;
+      res.text = '';
+      var mark = [];
+
+      if($(this).val().length > 1){
+        mark.id = Date.now();
+        mark.map = $('#map-wrapper').find('#map-background')
+        mark.marker = $(this).parent('form').parent('.item_marker')
+        mark.posX = parseFloat($(mark.marker).css('left'))
+        mark.posY = parseFloat($(mark.marker).css('top'))
+        mark.scale = 0
+
+        transform_map = mark.map.css('transform');
+        var matrix = transform_map.replace(/[^0-9\-.,]/g, '').split(',');
+        var scale = 0;
+          if(matrix[0] > 0 && matrix[3] > 0 && (matrix[3] === matrix[0]))
+          {
+            mark.scale = parseFloat(matrix[0]);
+          }else{
+
+          }
+        console.log(mark)
+      }else{ 
+        res.text = 'Имя метки не заданно.';
       }
+      return res;
     },
 
     setPositionCursor: function(pos) {

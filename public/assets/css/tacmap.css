@@ -130,6 +130,9 @@ html, body {
   display: flex;
   flex-direction: row-reverse;
 }
+.error {
+  background-color: orangered !important;
+}
 .new_marker.prevEvent {
   border: 1px solid white;
   background: #00000045;

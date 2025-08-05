@@ -70,16 +70,17 @@
             </div>
         <? } ?>
       </div>
-      <div id="layers_of_marker"></div>
+      <div id="layers_of_marker" data-lock="0"></div>
     </div>
   </div>
 
   <!-- Верхняя панель -->
-  <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4 hidden-box" style="top: 103px;width: 35%;right: 104px;color: #fff;">
+  <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4 hidden-box" style="top: 103px;width: 35%;right: 104px;color: #fff;height:200px;">
     <div id="posx"></div>
     <div id="posy"></div>
     <div id="scale_pos"></div>
     <div id="event_pos"></div>
+    <div id="cons_debug"></div>
   </div>
   <div class="top-bar d-flex justify-content-between align-items-center px-3 py-4">
     <div class="d-flex align-items-center">
@@ -158,6 +159,10 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+  
   <script src="/assets/js/tacmap.plugin.js"></script>
   <script src="/assets/js/map-marker.plugin.js"></script>
   <script src="/assets/js/map-nav.plugin.js"></script>
@@ -230,6 +235,11 @@
     });
     $('#layers_of_marker').on('dblclick', function(event) {
       $(this).markerMap('newMarker',event);
+    });
+    $(function() {
+        $(document).on('focusout', '.name_new_marker', function(){ 
+            $(this).markerMap('fucusOutMark',this)
+        });
     });
   </script>
   <!-- инициализация tacMap -->
