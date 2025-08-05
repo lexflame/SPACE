@@ -1,4 +1,3 @@
-<!-- TACMap HTML -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
