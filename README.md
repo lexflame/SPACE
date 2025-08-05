@@ -1,7 +1,7 @@
 [![Build Status](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c7c_Build-Passing-brightgreen.svg)]()
 [![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)
 ![PHP8](https://img.shields.io/badge/build-php8-marker)![codeigniter](https://img.shields.io/badge/engine-codeigniter-red?style=flat&logoColor=000&labelColor=000
-)![JQ](https://img.shields.io/badge/front-jq-blue?style=flat&logoColor=000&labelColor=000)![JQ](https://img.shields.io/badge/front-jqueryui-blue?style=flat&logoColor=000&labelColor=000)![CSS](https://img.shields.io/badge/front-bootstrap-purple?style=flat&logoColor=000&labelColor=000)
+)![JQ](https://img.shields.io/badge/front-jq-blue?style=flat&logoColor=000&labelColor=000)![JQ](https://img.shields.io/badge/front-jqueryui-blue?style=flat&logoColor=000&labelColor=000)![CSS](https://img.shields.io/badge/front-bootstrap-purple?style=flat&logoColor=000&labelColor=000)![JQ](https://img.shields.io/badge/front-jqconfirm-blue?style=flat&logoColor=000&labelColor=000)![JQ](https://img.shields.io/badge/front-jq-plugin-blue?style=flat&logoColor=000&labelColor=000)
 
 
 # SPACE
