@@ -11,6 +11,14 @@
       background-color: #f8f9fa;
       color: #212529;
     }
+    .white_strip {
+      color: #CCC !important;
+    }
+    .ndoundtabs .inout_box {
+      transform: translateY(-5px);
+      border: 1px solid #66686b;
+      border-radius: 7px;
+    }
     .toolbar {
       height: 60px;
       background-color: #212529;

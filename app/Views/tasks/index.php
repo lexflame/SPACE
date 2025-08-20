@@ -34,6 +34,11 @@
           opacity: 1;
           pointer-events: auto;
         }
+        .inout-date-picker .inout-date-display {
+          min-width: 120px;
+          text-align: center;
+          font-weight: 500;
+        }
     </style>
   <!-- Верхняя панель -->
   <div class="toolbar" id="toolbar">
@@ -95,8 +100,11 @@
 
       <ul class="nav nav-tabs mb-3" id="tabList">
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link active" data-filter="all">Все</a></li>
-        <li class="nav-item"><a href="#" class="today_btn ndoundtabs nav-link" data-filter="today">Сегодня</a></li>
+        <li class="nav-item"><a href="#" class="ndoundtabs nav-link today_btn" data-filter="today">Сегодня</a></li>
         <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="completed">Выполнено</a></li>
+        <li class="nav-item"><a href="#" class="ndoundtabs nav-link" data-filter="date">
+          <div id="inout" class="inout_box"></div>
+        </a></li>
       </ul>
 
     <div id="taskContainer">
@@ -109,15 +117,16 @@
   <!-- Подключение библиотек и медиа-->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/assets/js/maker-task.plugin.js"></script>
-<script>
-  
-  $(function() {
-    $('#taskContainer').makerTask({
-      apiUrl: '/tasks',          // API CodeIgniter
-      storageKey: 'makerTasks'
+  <script src="/assets/js/maker-task-date.plugin.js"></script>
+  <script>
+    
+    $(function() {
+      $('#taskContainer').makerTask({
+        apiUrl: '/tasks',          // API CodeIgniter
+        storageKey: 'makerTasks'
+      });
     });
-  });
-</script>
+  </script>
   <script>
     $(document).ready(function() {
        $('.today_btn').click();
@@ -140,6 +149,18 @@
       // Переход при обновлении/перезагрузке
       window.addEventListener('beforeunload', () => {
         document.getElementById('page-fadeout').classList.add('show');
+      });
+    </script>
+    <script>
+      $(function(){
+        // инициализация плагина
+        $('#inout').inoutDatePicker({
+          format: 'YYYY-MM-DD',
+          dind: true,
+          // startDate можно указать любую дату, иначе текущая
+          // startDate: '2025-08-15',
+          container: '#inout'
+        });
       });
     </script>
 </body>

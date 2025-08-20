@@ -77,6 +77,19 @@
       $('#makerTaskApp').fadeIn('slow')
     }
 
+    function normalizeDate(d){
+      var nd = new Date(d);
+      nd.setHours(0,0,0,0);
+      return nd;
+    }
+
+    function filteredDate( item ){
+      var itemDate = new Date(normalizeDate(item.date)).toDateString()
+      var toDate = new Date(normalizeDate($('#toDate').html())).toDateString();
+      if(itemDate === toDate){
+        return item;
+      }
+    }
 
     function renderTasks(filter = 'all') {
       
@@ -91,10 +104,11 @@
       let filtered = tasks.filter(t => {
         if (filter === 'today') return t.date.startsWith(todayStr) && !t.completed;
         if (filter === 'completed') return t.completed;
+        if (filter === 'date') return filteredDate(t);
         return true;
       });
 
-      // console.log(filtered)
+      console.log(filtered)
 
       if (!filtered.length) {
         $('.task-list').append('<p class="text-muted">Задач нет.</p>');
@@ -236,6 +250,7 @@
         $('.ndoundtabs').removeClass('active');
         $(this).addClass('active');
         const filter = $(this).data('filter');
+
         renderTasks(filter);
       });
 
