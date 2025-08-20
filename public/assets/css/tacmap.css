@@ -10,6 +10,14 @@ html, body {
 .hidden-box {
   display: none !important;
 }
+.item_marker.item_load .remove_mark,
+.item_marker.item_load .save_mark {
+  opacity: 0;
+}
+.item_marker.item_load .new_marker.prevEvent {
+  border: 0px;
+  background: transparent;
+}
 .topBox {
     width: 25px;
     height: 25px;

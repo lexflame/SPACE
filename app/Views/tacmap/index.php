@@ -233,7 +233,7 @@
       $(this).markerMap('mousemove',event_prt)
     });
     $('#layers_of_marker').on('dblclick', function(event) {
-      $(this).markerMap('newMarker',event);
+      $(this).markerMap('cenvasMarker',event);
     });
     $(function() {
         $(document).on('focusout', '.name_new_marker', function(){ 

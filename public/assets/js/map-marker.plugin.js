@@ -6,13 +6,27 @@
   const partion_lr = $('#layers_of_map_part');
   const settings = {storageKey: 'markerMap'};
 
-  
+  let type_init = false;
   let marker = [];
   let rect = 0;
   let sync_marker = [];
   // const offset = 0;
   let x = 0;
   let y = 0;
+  let init_marker = {
+    new:{
+      x:0,
+      y:0,
+      input_class:'name_new_marker',
+      value: 'Новая метка',  
+    },
+    load: {
+      x:0,
+      y:0,
+      input_class:'name_load_marker',
+      value: '',
+    }
+  };
 
   var posCur = [];
 
@@ -42,53 +56,54 @@
     },
 
     renderMark: function(){
+      var owner = arguments;
+      // var inObj = this;
       $.each(marker, function(keys, current_mark) {
-        position_x = current_mark.posX;
-        position_y = current_mark.posY;
+        init_marker.load.x = current_mark.posX;
+        init_marker.load.y = current_mark.posY;
+        init_marker.load.value = current_mark.marker;
         $(this).markerMap(
-            'newMarker',
-            false,
-            'render',
-            position_x,
-            position_y
+            'cenvasMarker',
+            owner,
+            'render'
             )
       });
+      $(this).markerMap('unLock')
     },
 
-    newMarker: function( event, owner = 'user', cur_x = false, cur_y = false ){
+    cenvasMarker: function( event ){
+      
+      if(typeof(event.callee) === 'function'){
+        type_init = 'load';
+      }else{
+        type_init = 'new';
+      }
 
-      if(
-        ($(this).markerMap('isLock') === false && x > 0 && y > 0)
-        || owner === 'render' 
-        ){
+      console.log($(this).markerMap('isLock') === false)
+      console.log(init_marker)
+
+      if(($(this).markerMap('isLock') === false && init_marker[type_init].x > 0 && init_marker[type_init].y > 0)){
         
         const new_marker = document.createElement("div");
         new_marker.style.position = "absolute";
 
-        if(owner === 'render'){
-          set_x = cur_x;
-          set_y = cur_y;
-        }else{
-          set_x = x;
-          set_y = y;
-        }
-
-        new_marker.style.left = set_x+'px';
-        new_marker.style.top = set_y+'px';
+        new_marker.style.left = init_marker[type_init].x+'px';
+        new_marker.style.top = init_marker[type_init].y+'px';
         
         new_marker.style.opacity = 0;
         new_marker.classList.add('item_marker');
+        if(type_init === 'load'){
+          new_marker.classList.add('item_load');
+        }
         new_marker.innerHTML = '🔵'
         
         $(new_marker).fadeTo({'opacity':'1'},0);
         $(marker_lr).prepend(new_marker);
         $(new_marker).fadeTo({'opacity':'1'},2000);
         
-        $(this).markerMap('createFormMarker',new_marker,owner)
+        $(this).markerMap('createFormMarker',new_marker)
 
-        if(owner === 'user'){
-          $(this).markerMap('Lock')
-        }
+        $(this).markerMap('Lock')
 
       }
     },
@@ -96,32 +111,32 @@
     createFormMarker: function( inc_box, owner ){
 
       const form = document.createElement("form");
-      form.setAttribute('class','new_marker prevEvent')
-      form.setAttribute('name','new_marker')
-      form.setAttribute('id','new_marker')
+            form.setAttribute('class','new_marker prevEvent')
+            form.setAttribute('name','new_marker')
+            form.setAttribute('id','new_marker')
 
       const input = document.createElement("input");
-      input.setAttribute('type','text')
-      input.setAttribute('class','name_new_marker')
-      // input.setAttribute('onblur','$(this).markerMap("fucusOutMark")')
-      input.setAttribute('name','name_new_marker')
-      input.setAttribute('id','name_new_marker')
+            input.setAttribute('type','text')
+            input.setAttribute('class', init_marker[type_init].input_class)
+            // input.setAttribute('onblur','$(this).markerMap("fucusOutMark")')
+            input.setAttribute('name',  init_marker[type_init].input_class)
+            input.setAttribute('id',    init_marker[type_init].input_class)
+            input.setAttribute('value', init_marker[type_init].value)
 
       const save_mark = document.createElement("div");
-      save_mark.setAttribute('class','save_mark')
-      save_mark.setAttribute('id','save_mark')
-      save_mark.setAttribute('onclick','$(this).markerMap("saveMark")')
-      save_mark.innerHTML = '✅'
+            save_mark.setAttribute('class','save_mark')
+            save_mark.setAttribute('id','save_mark')
+            save_mark.setAttribute('onclick','$(this).markerMap("saveMark")')
+            save_mark.innerHTML = '✅'
 
       const remove_mark = document.createElement("div");
-      remove_mark.setAttribute('class','remove_mark')
-      remove_mark.setAttribute('id','remove_mark')
-      remove_mark.innerHTML = '❌'
+            remove_mark.setAttribute('class','remove_mark')
+            remove_mark.setAttribute('id','remove_mark')
+            remove_mark.innerHTML = '❌'
 
-
-        form.prepend(input);
-        form.prepend(save_mark);
-        form.prepend(remove_mark);
+            form.prepend(input);
+            form.prepend(save_mark);
+            form.prepend(remove_mark);
 
       $(inc_box).prepend(form);
       $('#name_new_marker').focus()
@@ -155,7 +170,7 @@
               Нет: function () {
                   $(obj).parent('#new_marker').parent('.item_marker').remove();
                   $(obj).markerMap('unLock');
-                  $.alert('Маркер будет удален');
+                  $.alert({title: 'Внимание!',theme: 'supervan',content:'Маркер будет удален'});
               },
           }
       });
@@ -182,7 +197,7 @@
         new_mark = {
           id: Date.now(), 
           map: $('#map-wrapper').data('id'),
-          marker: $('#name_new_marker').val(),
+          marker: document.getElementById("name_new_marker").value,
           posX: parseFloat($(this).parent('form').parent('.item_marker').css('left')),
           posY: parseFloat($(this).parent('form').parent('.item_marker').css('top')),
           scale: toScale,
@@ -219,8 +234,8 @@
         const rects = this.getClientRects();
         if (rects.length > 0) {
           rect = posCur.rect = rects[0];
-          x = posCur.x = event_prt.clientX - posCur.rect.left - 20;
-          y = posCur.y = event_prt.clientY - posCur.rect.top - 20;
+          init_marker.new.x = posCur.x = event_prt.clientX - posCur.rect.left - 20;
+          init_marker.new.y = posCur.y = event_prt.clientY - posCur.rect.top - 20;
         }
       });
     }
