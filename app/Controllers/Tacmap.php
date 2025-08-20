@@ -91,7 +91,7 @@ class Tacmap extends BaseController
 
     public function data()
     {
-        $model = new TacmapModel();
+        $model = new TacmapMapModel();
         return $this->response->setJSON($model->getMarkers());
     }
 }

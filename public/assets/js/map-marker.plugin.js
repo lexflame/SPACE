@@ -4,6 +4,8 @@
   const map = $(this);
   const marker_lr = $('#layers_of_marker');
   const partion_lr = $('#layers_of_map_part');
+  const settings = {storageKey: 'markerMap'};
+
   
   let marker = [];
   let rect = 0;
@@ -17,17 +19,7 @@
   var methods = {
 
     init: function(options) {
-
-      const settings = $.extend({
-        storageKey: 'markerMap'
-      }, options);
-
-      $(this).markerMap('loadMerker');
-
-    },
-
-    loadMerker: function(){
-
+      $(this).markerMap('loadStore')
     },
 
     ping: function (){
@@ -49,26 +41,60 @@
       return (lock_attr === 0)?false:true;
     },
 
-    newMarker: function( event ){
-      if($(this).markerMap('isLock') === false && x > 0 && y > 0){
+    renderMark: function(){
+      $.each(marker, function(keys, current_mark) {
+        position_x = current_mark.posX;
+        position_y = current_mark.posY;
+        $(this).markerMap(
+            'newMarker',
+            false,
+            'render',
+            position_x,
+            position_y
+            )
+      });
+    },
+
+    newMarker: function( event, owner = 'user', cur_x = false, cur_y = false ){
+
+      if(
+        ($(this).markerMap('isLock') === false && x > 0 && y > 0)
+        || owner === 'render' 
+        ){
+        
         const new_marker = document.createElement("div");
         new_marker.style.position = "absolute";
-        new_marker.style.left = x+'px';
-        new_marker.style.top = y+'px';
+
+        if(owner === 'render'){
+          set_x = cur_x;
+          set_y = cur_y;
+        }else{
+          set_x = x;
+          set_y = y;
+        }
+
+        new_marker.style.left = set_x+'px';
+        new_marker.style.top = set_y+'px';
+        
         new_marker.style.opacity = 0;
         new_marker.classList.add('item_marker');
         new_marker.innerHTML = '🔵'
+        
         $(new_marker).fadeTo({'opacity':'1'},0);
         $(marker_lr).prepend(new_marker);
         $(new_marker).fadeTo({'opacity':'1'},2000);
-        $(this).markerMap('createFormMarker',new_marker)
-        $(this).markerMap('Lock')
+        
+        $(this).markerMap('createFormMarker',new_marker,owner)
+
+        if(owner === 'user'){
+          $(this).markerMap('Lock')
+        }
+
       }
     },
 
-    createFormMarker: function( inc_box ){
+    createFormMarker: function( inc_box, owner ){
 
-      
       const form = document.createElement("form");
       form.setAttribute('class','new_marker prevEvent')
       form.setAttribute('name','new_marker')
@@ -84,6 +110,7 @@
       const save_mark = document.createElement("div");
       save_mark.setAttribute('class','save_mark')
       save_mark.setAttribute('id','save_mark')
+      save_mark.setAttribute('onclick','$(this).markerMap("saveMark")')
       save_mark.innerHTML = '✅'
 
       const remove_mark = document.createElement("div");
@@ -98,6 +125,7 @@
 
       $(inc_box).prepend(form);
       $('#name_new_marker').focus()
+
     },
 
     fucusOutMark: function ( mark ){
@@ -121,7 +149,7 @@
                         title: 'Внимание!',
                         content: save.text,
                     });
-                    $(obj).addClass('error')
+                    // $(obj).addClass('error')
                   }
               },
               Нет: function () {
@@ -138,30 +166,47 @@
       var res = [];
       res.result = false;
       res.text = '';
-      var mark = [];
 
       if($(this).val().length > 1){
-        mark.id = Date.now();
-        mark.map = $('#map-wrapper').find('#map-background')
-        mark.marker = $(this).parent('form').parent('.item_marker')
-        mark.posX = parseFloat($(mark.marker).css('left'))
-        mark.posY = parseFloat($(mark.marker).css('top'))
-        mark.scale = 0
 
-        transform_map = mark.map.css('transform');
+        transform_map = $('#map-wrapper').find('#map-background').css('transform');
         var matrix = transform_map.replace(/[^0-9\-.,]/g, '').split(',');
-        var scale = 0;
+        var toScale = 0;
           if(matrix[0] > 0 && matrix[3] > 0 && (matrix[3] === matrix[0]))
           {
-            mark.scale = parseFloat(matrix[0]);
+            toScale = parseFloat(matrix[0]);
           }else{
 
           }
-        console.log(mark)
+
+        new_mark = {
+          id: Date.now(), 
+          map: $('#map-wrapper').data('id'),
+          marker: $('#name_new_marker').val(),
+          posX: parseFloat($(this).parent('form').parent('.item_marker').css('left')),
+          posY: parseFloat($(this).parent('form').parent('.item_marker').css('top')),
+          scale: toScale,
+        }
+
+        marker.unshift(new_mark);
+        $(this).markerMap('saveStore');
+        res.text = 'Метка сохранена.';
       }else{ 
         res.text = 'Имя метки не заданно.';
       }
       return res;
+    },
+
+    saveStore: function() {
+      console.log(marker)
+      localStorage.setItem(settings.storageKey, JSON.stringify(marker));
+    },
+
+
+    loadStore: function() {
+      const stored = localStorage.getItem(settings.storageKey);
+      marker = stored ? JSON.parse(stored) : [];
+      $(this).markerMap('renderMark')
     },
 
     setPositionCursor: function(pos) {
