@@ -82,11 +82,13 @@ class Tacmap extends BaseController
     public function dev($id = 1)
     {   
         echo '<title>Песочница</title>';
-        $model = new TacmapMapModel();
-        $arrMap = $model->where('id', $id)->findAll()[0];
-        $arrMap['dif'] = getimagesize('http://'.$_SERVER['HTTP_HOST'].$arrMap['path']);
-        // echo '<pre>'; print_r($arrMap); echo '</pre>'; exit;
-        return view('dev/index', $arrMap);
+        $reader = new \App\Libraries\WordReader();
+        $reader->convertDocxToHtml('/data/app/public/Космопорт - Казантип - Описание.docx');
+        // $model = new TacmapMapModel();
+        // $arrMap = $model->where('id', $id)->findAll()[0];
+        // $arrMap['dif'] = getimagesize('http://'.$_SERVER['HTTP_HOST'].$arrMap['path']);
+        // // echo '<pre>'; print_r($arrMap); echo '</pre>'; exit;
+        // return view('dev/index', $arrMap);
     }
 
     public function data()

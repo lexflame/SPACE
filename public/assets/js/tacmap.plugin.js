@@ -74,7 +74,7 @@
 
     $('#zoom-out').on('click', function () {
       scale = clamp(scale - 0.1, minScale, maxScale);
-      console.log(minScale);
+      // console.log(minScale);
       updateTransform();
     });
 
