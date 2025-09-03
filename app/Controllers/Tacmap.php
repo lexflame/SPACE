@@ -82,8 +82,12 @@ class Tacmap extends BaseController
     public function dev($id = 1)
     {   
         echo '<title>Песочница</title>';
-        $reader = new \App\Libraries\WordReader();
-        $reader->convertDocxToHtml('/data/app/public/Космопорт - Казантип - Описание.docx');
+        $reader = new \App\Libraries\WordReader('/data/app/public/Город - Сосны.docx');
+        $reader->getText();
+        // echo '<pre>';print_r($reader->getXmlBody());echo '</pre>';
+        echo $reader->getHtmlBody();
+        echo $reader->getHtmlStyle();
+        
         // $model = new TacmapMapModel();
         // $arrMap = $model->where('id', $id)->findAll()[0];
         // $arrMap['dif'] = getimagesize('http://'.$_SERVER['HTTP_HOST'].$arrMap['path']);
