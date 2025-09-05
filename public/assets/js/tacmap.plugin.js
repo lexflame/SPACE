@@ -52,12 +52,24 @@
       translate.x = clamp(translate.x, minX, maxX);
       translate.y = clamp(translate.y, minY, maxY);
     }
+    function clampElement() {
+      $.each($('#layers_of_marker').children('.item_marker'), function(keys, item) {
+        if(parseFloat($(this).attr('scale')) > 0){
+          if(parseFloat($(this).attr('scale')) < parseFloat(scale)){
+            $(this).fadeTo({'opacity':'1'},2000);
+          }else{
+            $(this).fadeOut({'opacity':'0'},2000);
+          }
+        }
+      });
+    }
 
     function clamp(value, min, max) {
       return Math.min(Math.max(value, min), max);
     }
 
     function updateTransform(animated = true) {
+      clampElement();
       if (animated) {
         $map.css('transition', 'transform 0.2s ease');
       } else {

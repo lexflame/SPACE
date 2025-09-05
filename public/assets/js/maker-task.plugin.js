@@ -23,7 +23,6 @@
       const unsyncedTasks = tasks.filter(task => !task._synced);
 
       if (unsyncedTasks.length === 0 && status === 0) return;
-
       
       // console.log(JSON.stringify(unsyncedTasks))
 

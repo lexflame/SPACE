@@ -66,13 +66,14 @@
         $(this).markerMap(
             'cenvasMarker',
             owner,
-            'render'
+            'render',
+            current_mark
             )
       });
       $(this).markerMap('unLock')
     },
 
-    cenvasMarker: function( event, func ){
+    cenvasMarker: function( event, func, current_mark = false ){
       
       if(typeof(event.callee) === 'function'){
         type_init = 'load';
@@ -85,6 +86,19 @@
         const new_marker = document.createElement("div");
         new_marker.style.position = "absolute";
 
+        var hide = false;
+        if(current_mark != false){
+          if(current_mark.scale > 0){
+            $(new_marker).attr('scale',current_mark.scale)
+            new_marker.style.opacity = 0;
+            hide = true;
+          }else{
+            // $(new_marker).attr('scale',false)
+          }
+        }else{
+          // $(new_marker).attr('scale',false)
+        }
+
         new_marker.style.left = init_marker[type_init].x+'px';
         new_marker.style.top = init_marker[type_init].y+'px';
         
@@ -93,11 +107,19 @@
         if(type_init === 'load'){
           new_marker.classList.add('item_load');
         }
-        new_marker.innerHTML = '🔵'
+        if(hide === false){
+          new_marker.innerHTML = '🔴'
+        }else{
+          new_marker.innerHTML = '🔵'
+        }
         
-        $(new_marker).fadeTo({'opacity':'1'},0);
+        if(hide === false)
+          $(new_marker).fadeTo({'opacity':'1'},0);
+
         $(marker_lr).prepend(new_marker);
-        $(new_marker).fadeTo({'opacity':'1'},2000);
+
+        if(hide === false)
+          $(new_marker).fadeTo({'opacity':'1'},2000);
         
         $(this).markerMap('createFormMarker',new_marker)
 
