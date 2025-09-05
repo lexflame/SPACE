@@ -4,16 +4,16 @@ use CodeIgniter\Model;
 
 /**
  * Модель задач.
- * Отвечает за доступ к таблице `task`.
+ * Отвечает за доступ к таблице `маркеров`.
  */
-class TaskModel extends Model
+class MarkerModel extends Model
 {
     /**
      * Название таблицы.
      *
      * @var string
      */
-    protected $table = 'uniion_task';
+    protected $table = 'uniion_marker';
 
     /**
      * Первичный ключ таблицы.

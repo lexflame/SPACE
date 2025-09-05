@@ -162,6 +162,15 @@ class WordReader
             $this->html_body .= '<div class="label_note">Сноски</div>';
             $this->html_body .= '<div class="note_box">';
             foreach($arrNote as $key => $text){
+                if(strpos($text, 'YandexDisk') != false){
+                    $origin_text = $text;
+                    $text = str_replace('\\','/',$text);
+                    $text = str_replace('//','/',$text);
+                    $text = str_replace('D:/YandexDisk/','https://disk.yandex.ru/client/disk/',$text);
+                    $text = '<a id="ref_'.$num.'" target="_blank" href="'.$text.'">'.$origin_text.'</a>';
+                }else{
+                    $text = '<a id="ref_'.$num.'" target="_blank" href="https://yandex.ru/search/?text='.$text.'">'.$text.'<a>';
+                }
                 $this->html_body .= '<p><sup class="noteref">['.$num.']</sup>  '.$text.'</p>';
                 $num++;
             }

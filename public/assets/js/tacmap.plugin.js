@@ -1,4 +1,4 @@
-// assets/js/tacmap.plugin.js
+  // assets/js/tacmap.plugin.js
 (function($) {
   $.fn.tacMap = function(options) {
 

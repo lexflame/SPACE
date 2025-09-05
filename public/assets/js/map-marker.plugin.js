@@ -59,6 +59,7 @@
       var owner = arguments;
       // var inObj = this;
       $.each(marker, function(keys, current_mark) {
+
         init_marker.load.x = current_mark.posX;
         init_marker.load.y = current_mark.posY;
         init_marker.load.value = current_mark.marker;
@@ -71,17 +72,14 @@
       $(this).markerMap('unLock')
     },
 
-    cenvasMarker: function( event ){
+    cenvasMarker: function( event, func ){
       
       if(typeof(event.callee) === 'function'){
         type_init = 'load';
       }else{
         type_init = 'new';
       }
-
-      console.log($(this).markerMap('isLock') === false)
-      console.log(init_marker)
-
+      
       if(($(this).markerMap('isLock') === false && init_marker[type_init].x > 0 && init_marker[type_init].y > 0)){
         
         const new_marker = document.createElement("div");
@@ -103,7 +101,9 @@
         
         $(this).markerMap('createFormMarker',new_marker)
 
-        $(this).markerMap('Lock')
+        if(type_init === 'new'){
+          $(this).markerMap('Lock')
+        }
 
       }
     },

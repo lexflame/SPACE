@@ -22,9 +22,12 @@ $routes->get('picker',      'Dashboard::picker');
 $routes->get   ('/tasks',               'TaskController::index');
 $routes->get   ('/tasks/list',          'TaskController::list');
 $routes->post  ('/tasks/create',        'TaskController::create');
-$routes->post  ('/tasks/sync/(:num)',   'TaskController::sync/$1');
 $routes->put   ('/tasks/update/(:num)', 'TaskController::update/$1');
 $routes->delete('/tasks/delete/(:num)', 'TaskController::delete/$1');
+
+$routes->get   ('/union/sync/(:num)',   'UnionController::index');
+$routes->post  ('/tasks/sync/(:num)',   'UnionController::sync/$1');
+$routes->post  ('/marker/sync/(:num)',  'UnionController::sync/$1');
 // $routes->get('/tasks/view/(:num)', 'TaskController::view/$1'); -  отдельная задача
 
 $routes->get('tacmap',      'Tacmap::index');

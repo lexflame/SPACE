@@ -1,15 +1,30 @@
 <?php namespace App\Controllers;
 
 use App\Models\TaskModel;
+use App\Models\MarkerModel;
 use CodeIgniter\API\ResponseTrait;
+use App\Libraries\ModelManager;
 
 /**
- * Контроллер задач.
+ * Юнион контроллер для работы с БД.
  * Обрабатывает CRUD-операции через REST API.
  */
-class TaskController extends BaseController
+class UnionController extends BaseController
 {
     use ResponseTrait;
+    public $Segment;
+    public $uri;
+
+    public function __construct()
+    {
+
+    }   
+
+    public function setModel()
+    {
+        $Manager = new ModelManager();
+        return $Manager->getTable($this->request);        
+    }
 
     /**
      * Возвращает HTML-страницу с задачами.
@@ -18,7 +33,7 @@ class TaskController extends BaseController
      */
     public function index()
     {
-        return view('tasks/index');
+
     }
 
     /**
@@ -28,7 +43,7 @@ class TaskController extends BaseController
      */
     public function list()
     {
-        $model = new TaskModel();
+        $model = $this->setModel();
         return $this->respond($model->orderBy('id', 'DESC')->findAll());
     }
 
@@ -39,7 +54,7 @@ class TaskController extends BaseController
      */
     public function create()
     {
-        $model = new TaskModel();
+        $model = $this->setModel();
         $data = $this->request->getJSON(true);
 
         $model->insert($data);
@@ -53,11 +68,10 @@ class TaskController extends BaseController
      */
     public function sync(int $up)
     {
-        $model = new TaskModel();
+        $model = $this->setModel();
         $res = [];
         if($up < 1){
             $data = $this->request->getJSON(true);
-            // $data = json_decode('[{"id":1752755002823,"title":"syncWithServer for plugin 14","date":"2025-07-24T18:00","priority":"high","description":"","link":"","tag":"","coords":"","files":[],"completed":false,"_synced":false,"synced":false}]',true);
             
             $arrSync = [];
             foreach ($data as $key => $task) {
@@ -66,8 +80,6 @@ class TaskController extends BaseController
                 $arrSync[$task['id']]['sync_id'] = $task['id'];
                 $arrSync[$task['id']]['remember'] = 0;
             }
-
-            // echo '<pre>'; print_r(); echo '</pre>';
 
             foreach($arrSync as $key => $taskData){
                 $error_text = false;
@@ -115,7 +127,7 @@ class TaskController extends BaseController
      */
     public function update($id)
     {
-        $model = new TaskModel();
+        $model = $this->setModel();
         $data = $this->request->getJSON(true);
 
         $model->update($id, $data);
@@ -130,7 +142,7 @@ class TaskController extends BaseController
      */
     public function delete($id)
     {
-        $model = new TaskModel();
+        $model = $this->setModel();
         $model->delete($id);
         return $this->respondDeleted();
     }
