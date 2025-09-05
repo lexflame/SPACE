@@ -59,7 +59,6 @@
       var owner = arguments;
       // var inObj = this;
       $.each(marker, function(keys, current_mark) {
-
         init_marker.load.x = current_mark.posX;
         init_marker.load.y = current_mark.posY;
         init_marker.load.value = current_mark.marker;
@@ -83,6 +82,14 @@
       
       if(($(this).markerMap('isLock') === false && init_marker[type_init].x > 0 && init_marker[type_init].y > 0)){
         
+        transform_map = $('#map-wrapper').find('#map-background').css('transform');
+        toScale = 0;
+        var matrix = transform_map.replace(/[^0-9\-.,]/g, '').split(',');
+          if(matrix[0] > 0 && matrix[3] > 0 && (matrix[3] === matrix[0]))
+          {
+            toScale = parseFloat(matrix[0]);
+          }
+
         const new_marker = document.createElement("div");
         new_marker.style.position = "absolute";
 
@@ -108,18 +115,26 @@
           new_marker.classList.add('item_load');
         }
         if(hide === false){
-          new_marker.innerHTML = '🔴'
+          var HInner = '🔴';
         }else{
-          new_marker.innerHTML = '🔵'
+          var HInner = '🔵';
         }
+        if(type_init === 'new'){
+          var HInner = '🎯';
+        }
+        new_marker.innerHTML = HInner
+
         
-        if(hide === false)
+        
+        if(hide === false){
           $(new_marker).fadeTo({'opacity':'1'},0);
+        }
 
         $(marker_lr).prepend(new_marker);
 
-        if(hide === false)
+        if(hide === false){
           $(new_marker).fadeTo({'opacity':'1'},2000);
+        }
         
         $(this).markerMap('createFormMarker',new_marker)
 
@@ -148,7 +163,7 @@
       const save_mark = document.createElement("div");
             save_mark.setAttribute('class','save_mark')
             save_mark.setAttribute('id','save_mark')
-            save_mark.setAttribute('onclick','$(this).markerMap("saveMark")')
+            save_mark.setAttribute('onclick','$(this).markerMap("saveMerker")')
             save_mark.innerHTML = '✅'
 
       const remove_mark = document.createElement("div");
@@ -167,44 +182,45 @@
 
     fucusOutMark: function ( mark ){
       var obj = this;
-      $.confirm({
-          title: 'Внимание!',
-          theme: 'supervan',
-          animation: 'zoom',
-          closeAnimation: 'scale',
-          animationBounce: 1.5,
-          animationSpeed: 2000,
-          content: 'Сохранить маркер?',
-          buttons: {
-              Да: function () {
-                  var save = $(obj).markerMap('saveMerker')
-                  if(save.result === true){
-                    $.alert('Сохранён');
-                  }else{
-                    $.alert({
-                        theme: 'dark',
-                        title: 'Внимание!',
-                        content: save.text,
-                    });
-                    // $(obj).addClass('error')
-                  }
-              },
-              Нет: function () {
-                  $(obj).parent('#new_marker').parent('.item_marker').remove();
-                  $(obj).markerMap('unLock');
-                  $.alert({title: 'Внимание!',theme: 'supervan',content:'Маркер будет удален'});
-              },
-          }
-      });
+      // $.confirm({
+      //     title: 'Внимание!',
+      //     theme: 'supervan',
+      //     animation: 'zoom',
+      //     closeAnimation: 'scale',
+      //     animationBounce: 1.5,
+      //     animationSpeed: 2000,
+      //     content: 'Сохранить маркер?',
+      //     buttons: {
+      //         Да: function () {
+      //             var save = $(obj).markerMap('saveMerker')
+      //             if(save.result === true){
+      //               $.alert('Сохранён');
+      //             }else{
+      //               $.alert({
+      //                   theme: 'dark',
+      //                   title: 'Внимание!',
+      //                   content: save.text,
+      //               });
+      //               // $(obj).addClass('error')
+      //             }
+      //         },
+      //         Нет: function () {
+      //             $(obj).parent('#new_marker').parent('.item_marker').remove();
+      //             $(obj).markerMap('unLock');
+      //             $.alert({title: 'Внимание!',theme: 'supervan',content:'Маркер будет удален'});
+      //         },
+      //     }
+      // });
     },
 
     saveMerker: function ()
     {
+      console.log('Save Marker')
       var res = [];
       res.result = false;
       res.text = '';
 
-      if($(this).val().length > 1){
+      if($(this).siblings('.name_new_marker').val().length > 1){
 
         transform_map = $('#map-wrapper').find('#map-background').css('transform');
         var matrix = transform_map.replace(/[^0-9\-.,]/g, '').split(',');
@@ -231,18 +247,27 @@
       }else{ 
         res.text = 'Имя метки не заданно.';
       }
+      
       return res;
+    },
+
+    reloadMerker: function() {  
+      $('#layers_of_marker').empty()
+      $(this).markerMap('unLock')
+      $(this).markerMap('loadStore')
     },
 
     saveStore: function() {
       console.log(marker)
       localStorage.setItem(settings.storageKey, JSON.stringify(marker));
+      $(this).markerMap('reloadMerker')
     },
 
 
     loadStore: function() {
       const stored = localStorage.getItem(settings.storageKey);
       marker = stored ? JSON.parse(stored) : [];
+      console.log('init loadStore')
       $(this).markerMap('renderMark')
     },
 

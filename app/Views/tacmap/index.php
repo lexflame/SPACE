@@ -237,7 +237,7 @@
     });
     $(function() {
         $(document).on('focusout', '.name_new_marker', function(){ 
-            $(this).markerMap('fucusOutMark',this)
+            // $(this).markerMap('fucusOutMark',this)
         });
     });
   </script>
