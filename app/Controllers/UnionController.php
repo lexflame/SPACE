@@ -2,6 +2,7 @@
 
 use App\Models\TaskModel;
 use App\Models\MarkerModel;
+use App\Models\MarkerMapModel;
 use CodeIgniter\API\ResponseTrait;
 use App\Libraries\ModelManager;
 
@@ -69,16 +70,30 @@ class UnionController extends BaseController
     public function sync(int $up)
     {
         $model = $this->setModel();
-        echo '<pre>';print_r($model);echo '</pre>';exit;
+        
         $res = [];
         if($up < 1){
             
-            $data = $this->request->getJSON(true);
-            
-            
+            $data = $this->request->getJSON(true); 
 
             $arrSync = [];
+            $addictedData = [];
+
             foreach ($data as $key => $record) {
+                    
+                $addicted = false;
+                switch ($model->getTable()) {
+                    case 'union_task':
+                        break;
+                    case 'union_marker':
+                        $addicted = new MarkerMapModel();
+                        $addictedData[$record['id']]['map_id'] = $record['map'];
+                        $addictedData[$record['id']]['marker_id'] = false;
+                        break;
+                    default:
+                        break;
+                }
+
                 $arrSync[$record['id']]['obj'] = json_encode($record);
                 $arrSync[$record['id']]['item_date'] = $record['date'];
                 $arrSync[$record['id']]['sync_id'] = $record['id'];
@@ -100,8 +115,22 @@ class UnionController extends BaseController
                 }
 
                 if($resUp === true){
+                    $respID = $model->insertID();
+
+                    if(isset($addictedData[$key])){
+                        foreach($addicted->allowedFields as $val){
+                            $val = trim($val);
+                            if($addictedData[$key][$val] != false){
+                                $recordAddictedData[$val] = $addictedData[$key][$val];
+                            }else{
+                                $recordAddictedData[$val] = $respID;
+                            }
+                        }
+                        $addictedRecord = $addicted->save($recordAddictedData,false);
+                    }
+
                     $recordSync[] = [
-                        'base_id' => $this->respondCreated(['id' => $model->insertID()]),
+                        'base_id' => $this->respondCreated(['id' => $respID]),
                         'sync_id' => $key,
                     ];
                 }

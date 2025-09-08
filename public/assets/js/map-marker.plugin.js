@@ -34,7 +34,7 @@
 
     init: function(options) {
       $(this).markerMap('loadStore')
-      $(this).markerMap('syncToServer',true)
+      $(this).markerMap('syncToServer',false)
     },
 
     ping: function (){
@@ -236,6 +236,7 @@
         new_mark = {
           id: Date.now(), 
           map: $('#map-wrapper').data('id'),
+          date: Date.now(),
           marker: document.getElementById("name_new_marker").value,
           posX: parseFloat($(this).parent('form').parent('.item_marker').css('left')),
           posY: parseFloat($(this).parent('form').parent('.item_marker').css('top')),
@@ -271,7 +272,6 @@
 
       if (unsyncedMarker.length === 0 && status === 0) return;
 
-
       $.ajax({
         url: '/marker/sync/'+status,
         method: 'POST',
@@ -289,29 +289,21 @@
               localStorage.setItem(settings.storageKey, JSON.stringify(marker))
             }
             
-            console.log(response.upData)
-            // $.each(response.upData, function(_,task) {
-            //   var inTask = JSON.parse(task)
-            //   const title = inTask.title;
-            //   const date = inTask.date;
-            //   const priority = inTask.priority;
-            //   const synMark = {
-            //     id: inTask.id,
-            //     title,
-            //     date,
-            //     priority,
-            //     description: inTask.description,
-            //     link: inTask.link,
-            //     tag: inTask.tag,
-            //     coords: inTask.coords,
-            //     files: inTask.files,
-            //     completed: inTask.completed,
-            //     synced: inTask.synced,
-            //     _synced: inTask._synced,
-            //   };
-            //   marker.unshift(synMark);
-            //   $(this).markerMap('saveStore')
-            // });
+            $.each(response.upData, function(_,resMarker) {
+              var inMark = JSON.parse(resMarker)
+              const synMark = {
+                date: inMark.date,
+                id: inMark.id,
+                map: inMark.map,
+                marker: inMark.marker,
+                posX: inMark.posX,
+                posY: inMark.posY,
+                scale: inMark.scale,
+                _synced: true,
+              };
+              marker.unshift(synMark);
+              $(this).markerMap('saveStore')
+            });
 
           }
         },
