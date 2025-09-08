@@ -34,6 +34,7 @@
 
     init: function(options) {
       $(this).markerMap('loadStore')
+      $(this).markerMap('syncToServer',true)
     },
 
     ping: function (){
@@ -239,6 +240,7 @@
           posX: parseFloat($(this).parent('form').parent('.item_marker').css('left')),
           posY: parseFloat($(this).parent('form').parent('.item_marker').css('top')),
           scale: toScale,
+          _synced: false,
         }
 
         marker.unshift(new_mark);
@@ -263,6 +265,62 @@
       $(this).markerMap('reloadMerker')
     },
 
+    syncToServer: function( sync = false ) {
+      var status = (marker.length > 0 && sync === false)?0:1;
+      const unsyncedMarker = marker.filter(marker => !marker._synced);
+
+      if (unsyncedMarker.length === 0 && status === 0) return;
+
+
+      $.ajax({
+        url: '/marker/sync/'+status,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(unsyncedMarker),
+        success: function (response) {
+          // Помечаем как синхронизированные
+          unsyncedMarker.forEach(t => t._synced = true);
+          $(this).markerMap('saveStore')
+          if(status === 0){
+            console.log(`[Sync] Отправлено: ${unsyncedMarker.length} задач`);
+          }else{
+            if(response.upData.length > 0){
+              marker = []
+              localStorage.setItem(settings.storageKey, JSON.stringify(marker))
+            }
+            
+            console.log(response.upData)
+            // $.each(response.upData, function(_,task) {
+            //   var inTask = JSON.parse(task)
+            //   const title = inTask.title;
+            //   const date = inTask.date;
+            //   const priority = inTask.priority;
+            //   const synMark = {
+            //     id: inTask.id,
+            //     title,
+            //     date,
+            //     priority,
+            //     description: inTask.description,
+            //     link: inTask.link,
+            //     tag: inTask.tag,
+            //     coords: inTask.coords,
+            //     files: inTask.files,
+            //     completed: inTask.completed,
+            //     synced: inTask.synced,
+            //     _synced: inTask._synced,
+            //   };
+            //   marker.unshift(synMark);
+            //   $(this).markerMap('saveStore')
+            // });
+
+          }
+        },
+        error: function (xhr) {
+          console.error('[Sync] Ошибка при синхронизации:', xhr.responseText);
+        }
+      });
+
+    },
 
     loadStore: function() {
       const stored = localStorage.getItem(settings.storageKey);

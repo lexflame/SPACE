@@ -10,6 +10,7 @@ class ModelManager
 	public function getTable( $request )
 	{
 		$Model = false;
+		
 		switch ($request->getUri()->getSegment(1)) {
 			case 'marker':
 				$Model = new MarkerModel();
@@ -18,7 +19,7 @@ class ModelManager
 				$Model = new TaskModel();
 				break;
 			case 'union':
-				$Model = new MarkerModel();
+				$Model = new UnionModel();
 				break;
 			default:
 				break;

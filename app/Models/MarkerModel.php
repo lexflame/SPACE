@@ -13,7 +13,7 @@ class MarkerModel extends Model
      *
      * @var string
      */
-    protected $table = 'uniion_marker';
+    protected $table = 'union_marker';
 
     /**
      * Первичный ключ таблицы.

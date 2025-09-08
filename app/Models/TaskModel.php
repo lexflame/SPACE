@@ -13,7 +13,7 @@ class TaskModel extends Model
      *
      * @var string
      */
-    protected $table = 'uniion_task';
+    protected $table = 'union_task';
 
     /**
      * Первичный ключ таблицы.

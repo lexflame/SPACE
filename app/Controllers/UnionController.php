@@ -69,34 +69,38 @@ class UnionController extends BaseController
     public function sync(int $up)
     {
         $model = $this->setModel();
+        echo '<pre>';print_r($model);echo '</pre>';exit;
         $res = [];
         if($up < 1){
+            
             $data = $this->request->getJSON(true);
             
+            
+
             $arrSync = [];
-            foreach ($data as $key => $task) {
-                $arrSync[$task['id']]['obj'] = json_encode($task);
-                $arrSync[$task['id']]['item_date'] = $task['date'];
-                $arrSync[$task['id']]['sync_id'] = $task['id'];
-                $arrSync[$task['id']]['remember'] = 0;
+            foreach ($data as $key => $record) {
+                $arrSync[$record['id']]['obj'] = json_encode($record);
+                $arrSync[$record['id']]['item_date'] = $record['date'];
+                $arrSync[$record['id']]['sync_id'] = $record['id'];
+                $arrSync[$record['id']]['remember'] = 0;
             }
 
-            foreach($arrSync as $key => $taskData){
+            foreach($arrSync as $key => $recordData){
                 $error_text = false;
                 $isSave = count($model->where('sync_id', $key)->findAll()) > 0;
 
                 if($isSave){
-                    $taskData['id'] = intval($model->where('sync_id', $key)->findAll()[0]['id']);
+                    $recordData['id'] = intval($model->where('sync_id', $key)->findAll()[0]['id']);
                 }
 
                 try {
-                    $resUp = $model->save($taskData,false);
+                    $resUp = $model->save($recordData,false);
                 } catch (\Exception $e) {
                     $error_text = $e->getMessage();
                 }
 
                 if($resUp === true){
-                    $taskSync[] = [
+                    $recordSync[] = [
                         'base_id' => $this->respondCreated(['id' => $model->insertID()]),
                         'sync_id' => $key,
                     ];
@@ -104,14 +108,14 @@ class UnionController extends BaseController
             }
             $res = [
                 'status' => 'success',
-                'data' => $taskSync,
+                'data' => $recordSync,
                 'up' => $up,
             ];
         }else{
-            $arrTasks = $model->where('remember', 0)->findAll();
+            $arrRecord = $model->where('remember', 0)->findAll();
             $arrDataJson = [];
-            foreach($arrTasks as $index_key => $task){
-                $arrDataJson[] = $task['obj'];
+            foreach($arrRecord as $index_key => $record){
+                $arrDataJson[] = $record['obj'];
             } 
             $res['upData'] = $arrDataJson;
         }
