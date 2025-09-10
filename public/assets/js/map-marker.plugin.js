@@ -81,14 +81,19 @@
         type_init = 'new';
       }
       
+      
       if(($(this).markerMap('isLock') === false && init_marker[type_init].x > 0 && init_marker[type_init].y > 0)){
         
         transform_map = $('#map-wrapper').find('#map-background').css('transform');
         toScale = 0;
+        inScale = false;
         var matrix = transform_map.replace(/[^0-9\-.,]/g, '').split(',');
           if(matrix[0] > 0 && matrix[3] > 0 && (matrix[3] === matrix[0]))
           {
             toScale = parseFloat(matrix[0]);
+            if(type_init === 'new'){
+              inScale = true;
+            }
           }
 
         const new_marker = document.createElement("div");
@@ -107,8 +112,20 @@
           // $(new_marker).attr('scale',false)
         }
 
-        new_marker.style.left = init_marker[type_init].x+'px';
-        new_marker.style.top = init_marker[type_init].y+'px';
+        var posMX = 0;
+        var posMY = 0;
+        var branch = 0;
+        if(inScale === false || type_init === 'load'){
+          posMX = init_marker[type_init].x;
+          posMY = init_marker[type_init].y;
+        }else{
+          posMX = $('#layers_of_marker').attr('data-mousex');
+          posMY = $('#layers_of_marker').attr('data-mousey');
+        }
+        console.log({posMX,posMY})
+
+        new_marker.style.left = posMX+'px';
+        new_marker.style.top = posMY+'px';
         
         new_marker.style.opacity = 0;
         new_marker.classList.add('item_marker');

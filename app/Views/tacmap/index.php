@@ -21,6 +21,7 @@
       grid-template-columns: repeat(<?=$flex_count?>, 1fr);
       grid-template-rows: repeat(<?=$flex_count?>, <?=$height_flex_box?>px);
       width: <?=$dif[1]?>px;
+      width: <?=$widthMapWrapper?>px;
     }
     .layers_of_map_part .flex_box {
       width: <?=$width_flex_box?>px;
@@ -163,6 +164,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
   
   <script src="/assets/js/tacmap.plugin.js"></script>
+  <script src="/assets/js/map-mouse.plugin.js"></script>
   <script src="/assets/js/map-marker.plugin.js"></script>
   <script src="/assets/js/map-nav.plugin.js"></script>
   <script src="/assets/js/minute-frame.plugin.js"></script>
@@ -229,11 +231,18 @@
         storageKey: 'markerMap'
       });
     });
-    $('#layers_of_map_part').on('mousemove', function(event_prt) {
-      $(this).markerMap('mousemove',event_prt)
+    $(document).ready(function() {
+      $('#layers_of_map_part').on('mousemove', function(event) {
+        
+        $(this).markerMap('mousemove',event)
+        $(this).mousePosScaled(event);
+
+      });
     });
     $('#layers_of_marker').on('dblclick', function(event) {
-      $(this).markerMap('cenvasMarker',event);
+
+      $(this).markerMap('cenvasMarker',event)
+
     });
     $(function() {
         $(document).on('focusout', '.name_new_marker', function(){ 
