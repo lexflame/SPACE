@@ -119,6 +119,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/assets/js/maker-task.plugin.js"></script>
   <script src="/assets/js/maker-task-date.plugin.js"></script>
+  <script src="/assets/js/slide-task.plugin.js"></script>
   <script>
     
     $(function() {

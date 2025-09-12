@@ -70,7 +70,7 @@
           console.error('[Sync] Ошибка при синхронизации:', xhr.responseText);
         }
       });
-      renderTasks();
+      renderTasks('all',true)
       $('#makerTaskApp').fadeOut('slow')
         $('.today_btn').click();
       $('#makerTaskApp').fadeIn('slow')
@@ -108,7 +108,7 @@
         });
       }
       saveTasks()
-      renderTasks()
+      renderTasks('all',true)
     }
 
     function normalizeDate(d){
@@ -125,7 +125,7 @@
       }
     }
 
-    function renderTasks(filter = 'all') {
+    function renderTasks(filter = 'all' , invoke = false) {
       
       const list = $('.task-list');
       $list.empty();
@@ -142,7 +142,7 @@
         return true;
       });
 
-      console.log(filtered)
+      // console.log(filtered)
 
       if (!filtered.length) {
         $('.task-list').append('<p class="text-muted">Задач нет.</p>');
@@ -278,7 +278,8 @@
           $card.find('.priority_box').html('OVERDUE').removeClass('text-success').addClass('text-danger')
         }
       });
-
+      if(invoke === true)
+        $(this).slideTask('slideGo',this)
     }
 
     function bindEvents() {
@@ -286,6 +287,7 @@
       $('.ndoundtabs').on('click', function () {
         $('.ndoundtabs').removeClass('active');
         $(this).addClass('active');
+        $(this).slideTask('slideTo',$(this))
         const filter = $(this).data('filter');
 
         renderTasks(filter);
@@ -379,7 +381,7 @@
         tasks.unshift(task);
         saveTasks();
         this.reset();
-        renderTasks();
+        renderTasks('all',true)
       });
     }
 
@@ -406,7 +408,7 @@
           : task.files;
 
         saveTasks();
-        renderTasks();
+        renderTasks('all',true)
       }
     });
 
