@@ -12,6 +12,7 @@
   <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="/assets/css/makerTask-responsive.css"/>
+  <link rel="stylesheet" href="/assets/css/darkscroll.css"/>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body class="dark">
@@ -95,7 +96,7 @@
   </div>
 
   <!-- Контент -->
-  <div class="content" style="width: 75%;margin:auto;">
+  <div class="content dcast-dark" style="width: 75%;margin:auto;">
     <div id="makerTaskApp">
 
       <ul class="nav nav-tabs mb-3" id="tabList">

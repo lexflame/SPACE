@@ -19,6 +19,9 @@
       border: 1px solid #66686b;
       border-radius: 7px;
     }
+    .tomorow_to {
+      cursor: pointer;
+    }
     .toolbar {
       height: 60px;
       background-color: #212529;

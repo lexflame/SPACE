@@ -76,6 +76,41 @@
       $('#makerTaskApp').fadeIn('slow')
     }
 
+    function getCurrentTask( element ){
+      return $(element).closest('.cardTask')
+    }
+
+    function TomorowToTask( element ){
+      var res = isWeekendDate($(element).data('datetask'));
+      var time = $(element).data('datetask').split('T')[1];
+      var itemTaskDate = new Date($(element).data('datetask'))
+      if(res.dayOfWeek + 1 > 5){
+         itemTaskDate.setTime(itemTaskDate.getTime() + 24 * 3 * 60 * 60 * 1000);
+      }else{
+        itemTaskDate.setTime(itemTaskDate.getTime() + 24 * 60 * 60 * 1000);
+      }
+      var setDate = itemTaskDate.toISOString().slice(0, 10);
+      var setFullDate = setDate+'T'+time;
+      editTask(
+          getCurrentTask($(element)),
+          setFullDate,
+          'date'
+      );
+    }
+
+    function editTask( taskElement = false , value = false, field = false ){
+      if(taskElement != false && value != false && field != false){
+        let idEdit = $(taskElement).data('id');
+        $.each(tasks, function(_, task) {
+          if(task.id === idEdit){
+            task[field] = value
+          }
+        });
+      }
+      saveTasks()
+      renderTasks()
+    }
+
     function normalizeDate(d){
       var nd = new Date(d);
       nd.setHours(0,0,0,0);
@@ -127,7 +162,7 @@
         }
 
         const $card = $(`
-          <div class="card mb-2 bg-dark text-white border-secondary w-100" data-id="${task.id}">
+          <div class="card cardTask mb-2 bg-dark text-white border-secondary w-100" data-id="${task.id}">
             <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center flex-nowrap">
 
               <!-- Левая часть: чекбокс + дата + заголовок -->
@@ -140,8 +175,11 @@
                 </div>
 
                 <!-- Дата -->
-                <small class="text-muted mr-3 text-nowrap">
+                <small class="text-muted mr-3 text-nowrap dateTask" data-datetask="${task.date}">
                   📅 ${new Date(task.date).toLocaleString()}
+                </small>
+                <small class="text-muted mr-3 text-nowrap tomorow_to">
+                  >>
                 </small>
 
                 <!-- Заголовок -->
@@ -275,6 +313,10 @@
       });
 
       // Toggle completed
+      $(document).on('click', '.tomorow_to', function () {
+        TomorowToTask($(this).siblings('.dateTask'));
+      });
+
       $(document).on('click', '.toggle-completed', function () {
         const $card = $(this).closest('.card');
         const id = $card.data('id');
@@ -367,6 +409,62 @@
         renderTasks();
       }
     });
+
+    function isWeekendDate(inputDateStr, inputFormat) {
+      // Приведение к UTC-подобному парсеру через собственную логику или через Date конструктор
+      // Здесь реализую простой разбор для форматов "YYYY-MM-DD" и "YYYY-MM-DD HH:mm:ss"
+      var y, m, d, hh = 0, mm = 0, ss = 0;
+
+      // Простой разбор без зависимостей
+      var datePart = inputDateStr.trim();
+      var timePart = "";
+      if (datePart.indexOf(" ") >= 0) {
+        var parts = datePart.split(/\s+/);
+        datePart = parts[0];
+        timePart = parts[1];
+      }
+
+      // Разбираем дату
+      var dParts = datePart.split("-");
+      if (dParts.length < 3) {
+        // Неподдерживаемый формат
+        return { error: "Неподдерживаемый формат даты" };
+      }
+      y = parseInt(dParts[0], 10);
+      m = parseInt(dParts[1], 10) - 1; // месяцы в JS с нуля
+      d = parseInt(dParts[2], 10);
+
+      // Разбираем время, если есть
+      if (timePart) {
+        var tParts = timePart.split(":");
+        if (tParts.length >= 2) {
+          hh = parseInt(tParts[0], 10);
+          mm = parseInt(tParts[1], 10);
+          if (tParts.length >= 3) {
+            ss = parseInt(tParts[2], 10);
+          }
+        }
+      }
+
+      // Создаём объект Date (локальное время)
+      var dt = new Date(y, m, d, hh, mm, ss);
+      // Можно использовать UTC, если надо:
+      // var dt = new Date(Date.UTC(y, m, d, hh, mm, ss));
+
+      if (isNaN(dt.getTime())) {
+        return { error: "Не удалось распознать дату" };
+      }
+
+      var day = dt.getDay(); // 0 - воскресенье, 6 - суббота
+      var isWeekend = (day === 0 || day === 6);
+
+      // Пример вывода: можно вернуть объект с датой и признаком выходного
+      return {
+        date: dt,
+        isWeekend: isWeekend,
+        dayOfWeek: day // 0-6
+      };
+    }
 
     function init() {
       loadTasks();

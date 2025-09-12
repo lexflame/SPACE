@@ -1,0 +1,54 @@
+/* Общий контейнер с прокруткой */
+.dcast {
+  height: inherit;          /* пример высоты; замените по necessidade */
+  overflow: auto;
+  scrollbar-width: thin;    /* для Firefox */
+  scrollbar-color: #4a90e2 #f0f0f0; /* [трек] [ползунок] по умолчанию */
+}
+
+/* Firefox: стиль трека и ползунка через ::-webkit scrollbar не работает, нужна полная реализация ниже */
+.dcast::-webkit-scrollbar {
+  width: 12px;              /* ширина вертикального скролла */
+  height: 12px;             /* высота горизонтального скролла, если нужен */
+  border-radius: 10px;
+}
+.dcast::-webkit-scrollbar-thumb {
+  background: #4a90e2;        /* цвет бегунка */
+  border-radius: 10px;          /* радиус 8–12px */
+  border: 2px solid #f0f0f0;    /* создаёт контрастный кантик (опционально) */
+  transition: background-color 0.2s ease;
+}
+.dcast::-webkit-scrollbar-thumb:hover,
+.dcast::-webkit-scrollbar-thumb:focus {
+  background: #6bb4ff;          /* лёгкое увеличение яркости бегунка на hover/focus */
+}
+.dcast::-webkit-scrollbar-track {
+  background: #f0f0f0;           /* цвет трека (светлый фон) */
+  border-radius: 10px;
+}
+.dcast-dark {
+  height: inherit;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #6c757d #343a40; /* [ползунок] [трек] */
+
+}
+.dcast-dark::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  border-radius: 10px;
+}
+.dcast-dark::-webkit-scrollbar-thumb {
+  background: #a3a0ff;        /* контрастный светлый бегунок на тёмном фоне */
+  border-radius: 10px;
+  border: 2px solid #1f1f1f;    /* темный контур трека */
+  transition: background-color 0.2s ease;
+}
+.dcast-dark::-webkit-scrollbar-thumb:hover,
+.dcast-dark::-webkit-scrollbar-thumb:focus {
+  background: #c6c4ff;         /* лёгкое увеличение яркости */
+}
+.dcast-dark::-webkit-scrollbar-track {
+  background: #1f1f1f;           /* темный трек */
+  border-radius: 10px;
+}
